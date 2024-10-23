@@ -2,7 +2,7 @@
     <nav class="top-navbar">
       <div class="container">
         <div class="logo">
-          <img src="/vite.svg" alt="Logo" />
+          <a href="/"><img src="/vite.svg" alt="Logo" /> 钱书 </a>
         </div>
         <ul class="menu">
           <li><router-link to="/">概览</router-link></li>
@@ -43,10 +43,17 @@
   
   .logo {
     margin-left: 0; /* 移除左边内边距 */
+    display: flex;
+    align-items: center; /* 垂直居中 */
   }
-  
+
+.logo a {
+    display: flex;
+    align-items: center; /* 让 a 标签内的内容也居中 */
+}
   .logo img {
     height: 40px;
+    margin-right: 10px;
   }
   
   .menu {
@@ -63,5 +70,9 @@
   
   .menu li a:hover {
     color: #007bff;
+  }
+
+  span {
+    text-align: center;
   }
   </style>
