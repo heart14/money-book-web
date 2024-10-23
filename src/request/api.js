@@ -8,6 +8,10 @@ export function monthData(year) {
     return service.get(`/daily/monthData/${year}`)
 }
 
+export function categoryData(year) {
+    return service.get(`/daily/categoryData/${year}`)
+}
+
 export function monthCateData(year) {
     return service.get(`/daily/monthCategoryData/${year}`)
 }
