@@ -46,6 +46,9 @@
 import { ref, onMounted, onUnmounted, nextTick } from 'vue';
 import * as echarts from 'echarts';
 import { monthData, categoryData,  monthCateData } from '@/request/api';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 // 月份分类统计表查询参数
 const monthCategoryDataForm = ref({
@@ -141,6 +144,20 @@ const initChart = () => {
       }]
     };
     chartInstance.setOption(option);
+
+    // 添加点击事件监听器
+    chartInstance.on('click', (params) => {
+      // params.dataIndex 是点击的柱子索引
+      const monthIndex = params.dataIndex;
+      const selectedMonth = chartMonthData.months[monthIndex];
+      console.log(router);
+      // 使用 Vue Router 进行路由切换
+      router.push({ 
+        name: 'About', // 目标页面的路由名称
+        query: { month: selectedMonth } // 将月份作为查询参数
+      });
+    });
+  
   }
 };
 
