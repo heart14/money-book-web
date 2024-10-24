@@ -66,11 +66,7 @@ const formInline = reactive({
   category: '',
   byYear: '',
   byMonth: '',
-  byDate: (() => {
-    const date = new Date();
-    date.setDate(date.getDate() - 0); // 设置为前一天
-    return date.toLocaleString().split(' ')[0].replaceAll('/','-'); // 获取YYYY-MM-DD格式
-  })()
+  byDate: ''
 })
 const queryType = ref('日')
 const data = ref([])
@@ -112,6 +108,14 @@ onMounted(() => {
       name: 'About',
       query: {}
     });
+  } else {
+    formInline.byYear = ''
+    formInline.byMonth = ''
+    formInline.byDate = (() => {
+      const date = new Date();
+      date.setDate(date.getDate() - 0); // 设置为前一天
+      return date.toLocaleString().split(' ')[0].replaceAll('/', '-'); // 获取YYYY-MM-DD格式
+    })()
   }
   onSubmit(); // 调用 onSubmit 函数进行查询
 

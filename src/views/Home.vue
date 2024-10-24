@@ -6,20 +6,34 @@
 
       <el-form :inline="true" :model="monthDataForm" class="demo-form-inline">
         <el-form-item label="统计年份">
-          <el-date-picker v-model="monthDataForm.year" type="year" :disabled-date="disabledDate" @change="onMonthDataFormChange"
-            value-format="YYYY" placeholder="统计年份" clearable />
+          <el-date-picker v-model="monthDataForm.year" type="year" :disabled-date="disabledDate"
+            @change="onMonthDataFormChange" value-format="YYYY" placeholder="统计年份" clearable />
         </el-form-item>
       </el-form>
 
       <div ref="chartDom" style="width: 100%; height: 400px;"></div>
     </div>
+
+    <div class="pie-container">
+      <p>{{ categoryDataForm.year }}年：分类支出统计表</p>
+
+      <el-form :inline="true" :model="categoryDataForm" class="demo-form-inline">
+        <el-form-item label="统计年份">
+          <el-date-picker v-model="categoryDataForm.year" type="year" :disabled-date="disabledDate"
+            @change="onCategoryDataFormChange" value-format="YYYY" placeholder="统计年份" clearable />
+        </el-form-item>
+      </el-form>
+
+      <div ref="pieChartDom" style="width: 800px; height: 400px;"></div>
+    </div>
+
     <div class="table-container">
       <p>{{ monthCategoryDataForm.year }}年：月分类支出统计表</p>
 
       <el-form :inline="true" :model="monthCategoryDataForm" class="demo-form-inline">
         <el-form-item label="统计年份">
-          <el-date-picker v-model="monthCategoryDataForm.year" type="year" :disabled-date="disabledDate" @change="onMonthCategoryDataFormChange"
-            value-format="YYYY" placeholder="统计年份" clearable />
+          <el-date-picker v-model="monthCategoryDataForm.year" type="year" :disabled-date="disabledDate"
+            @change="onMonthCategoryDataFormChange" value-format="YYYY" placeholder="统计年份" clearable />
         </el-form-item>
       </el-form>
 
@@ -45,72 +59,95 @@
 <script setup>
 import { ref, onMounted, onUnmounted, nextTick } from 'vue';
 import * as echarts from 'echarts';
-import { monthData, categoryData,  monthCateData } from '@/request/api';
+import { monthData, categoryData, monthCateData } from '@/request/api';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
-// 月份分类统计表查询参数
-const monthCategoryDataForm = ref({
-  year: new Date().getFullYear()
-})
-// 创建一个响应式引用来保存TABLE数据
+// 月份统计图CHART数据
+const chartMonthData = ref({
+  months: [],
+  values: []
+});
+// 分类统计图CHART数据
+const chartCategoryData = ref({
+  categories: [],
+  totalAmounts: []
+});
+
+// 月份分类统计表TABLE数据
 const monthCategoryData = ref([])
 
 // 月份统计图查询年份参数
 const monthDataForm = ref({
   year: new Date().getFullYear()
 })
-// 创建一个响应式引用来保存DOM元素
+// 分类统计图查询年份参数
+const categoryDataForm = ref({
+  year: new Date().getFullYear()
+})
+// 月份分类统计表查询参数
+const monthCategoryDataForm = ref({
+  year: new Date().getFullYear()
+})
+
+
+// 月份统计图DOM元素
 const chartDom = ref(null);
 let chartInstance = null;
-// 创建一个响应式引用来保存CHART数据
-const chartMonthData = ref({
-  months: [],
-  values: []
-});
-
-// 查询月份分类统计表数据
-const fetchMonthCateData = async () => {
-  const res = await monthCateData(monthCategoryDataForm.value.year);
-  monthCategoryData.value = res.data
-}
+// 分类统计图DOM 元素
+const pieChartDom = ref(null);
+let pieChartInstance = null;
 
 // 查询月份统计图数据
 const fetchMonthData = async () => {
-  await nextTick(); // 确保DOM已经渲染完成
-  chartInstance = echarts.init(chartDom.value);
-
   const res = await monthData(monthDataForm.value.year);
+  console.log('month data')
   console.log(res.data)
   chartMonthData.months = res.data.map(item => item.byMonth)
   chartMonthData.value = res.data.map(item => item.totalAmount)
   initChart();
 }
 
-const onMonthDataFormChange = () =>{
+// 查询分类统计图数据
+const fetchCategoryData = async () => {
+  console.log("?????1")
+  const res = await categoryData(categoryDataForm.value.year);
+  console.log('category data')
+  console.log(res.data)
+  chartCategoryData.categories = res.data.map(item => item.category)
+  chartCategoryData.totalAmounts = res.data.map(item => item.totalAmount)
+  console.log(chartCategoryData)
+  initPieChart();
+}
+
+// 查询月份分类统计表数据
+const fetchMonthCateData = async () => {
+  const res = await monthCateData(monthCategoryDataForm.value.year);
+  console.log('month category data')
+  console.log(res.data)
+  monthCategoryData.value = res.data
+}
+
+
+// 修改统计年份时触发刷新统计图
+const onMonthDataFormChange = () => {
   fetchMonthData()
 }
-
-const onMonthCategoryDataFormChange = () =>{
+// 修改统计年份时触发刷新统计图
+const onCategoryDataFormChange = () => {
+  fetchCategoryData()
+}
+// 修改统计年份时触发刷新表格
+const onMonthCategoryDataFormChange = () => {
   fetchMonthCateData()
 }
 
-// 初始化ECharts实例并设置配置项（这里以折线图为例，但可灵活替换）
-onMounted(async () => {
-  fetchMonthData();
-  fetchMonthCateData()
-});
 
-// 销毁ECharts实例
-onUnmounted(() => {
-  if (chartInstance != null && chartInstance.dispose) {
-    chartInstance.dispose();
-  }
-});
+// 初始化月份统计图的方法
+const initChart = async () => {
+  await nextTick(); // 确保DOM已经渲染完成
 
-// 初始化图表的方法
-const initChart = () => {
   if (chartInstance && chartMonthData.value) {
     const option = {
       // chartMonthData.value作为数据源
@@ -152,19 +189,74 @@ const initChart = () => {
       const selectedMonth = chartMonthData.months[monthIndex];
       console.log(router);
       // 使用 Vue Router 进行路由切换
-      router.push({ 
+      router.push({
         name: 'About', // 目标页面的路由名称
         query: { month: selectedMonth } // 将月份作为查询参数
       });
     });
-  
   }
 };
+// 初始化分类统计图的方法
+const initPieChart = async () => {
+  await nextTick(); // 确保DOM已经渲染完成
+  if (pieChartInstance && chartCategoryData.value) {
+    const option = {
+      title: {
+        // text: '饼图示例',
+        // left: 'center'
+      },
+      tooltip: {
+        trigger: 'item', // 当鼠标悬停在某个数据项上时显示提示框
+        formatter: '{a} <br/>{b}: {c} ({d}%)' // 提示框内容格式化
+      },
+      legend: {
+        orient: 'vertical',
+        left: 'left'
+      },
+      series: [
+        {
+          name: '分类',
+          type: 'pie',
+          radius: '80%',
+          center: ['50%', '60%'],
+          data: chartCategoryData.categories.map((category, index) => ({
+            name: category,
+            value: chartCategoryData.totalAmounts[index]
+          })),
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
+          }
+        }
+      ]
+    };
+    pieChartInstance.setOption(option);
+  }
+}
 
 // 日期选择器中禁用今天之后的日期
 const disabledDate = (date) => {
   return date.getTime() > Date.now()
 }
+
+// 钩子函数
+onMounted(async () => {
+  chartInstance = echarts.init(chartDom.value);
+  pieChartInstance = echarts.init(pieChartDom.value);
+  fetchMonthData();
+  fetchCategoryData();
+  fetchMonthCateData()
+});
+
+// 销毁ECharts实例
+onUnmounted(() => {
+  if (chartInstance != null && chartInstance.dispose) {
+    chartInstance.dispose();
+  }
+});
 </script>
 <style scoped>
 .main-container {
@@ -172,20 +264,29 @@ const disabledDate = (date) => {
   flex-direction: column;
   align-items: flex-start;
   /* 使内容从左上角开始 */
-  padding: 20px;
+  /* padding: 10px; */
   /* 根据需要调整内边距 */
-  padding: 3rem;
+  /* padding: 3rem; */
 }
 
 .chart-container {
   width: 800px;
   height: 400px;
   margin-bottom: 20px;
-  padding: inherit;
+  padding: 3rem;
+  /* 根据需要调整外边距 */
+}
+
+.pie-container {
+  width: 800px;
+  height: 400px;
+  margin-bottom: 20px;
+  padding: 3rem;
   /* 根据需要调整外边距 */
 }
 
 .table-container {
-  padding: inherit;
+  margin-top: 40px;
+  padding: 3rem;
 }
 </style>
