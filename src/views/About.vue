@@ -46,18 +46,16 @@
       <el-table-column prop="title" label="描述" width="180"></el-table-column>
       <el-table-column prop="amount" label="金额(元)" width="180"></el-table-column>
       <!-- <el-table-column prop="remark" label="备注" width="180"></el-table-column> -->
-      <el-table-column prop="recordTime" label="时间" width="180"></el-table-column>
+      <el-table-column prop="recordTime" label="记录时间" width="180"></el-table-column>
       <!-- <el-table-column prop="username" label="用户名" width="180"></el-table-column> -->
     </el-table>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { reactive } from 'vue'
+import { ref, inject, watch, reactive, onMounted } from 'vue';
 import { queryRecord } from '@/request/api';
 import { ElTable, ElTableColumn } from 'element-plus';
-import { onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const formInline = reactive({
@@ -66,11 +64,20 @@ const formInline = reactive({
   category: '',
   byYear: '',
   byMonth: '',
-  byDate: ''
+  byDate: '',
+  username:''
 })
 const queryType = ref('日')
 const data = ref([])
 
+const selectedUser = inject('selectedUser'); // 注入选中的值
+
+// 监听 selectedUser 的变化
+watch(selectedUser, (newValue) => {
+  console.log('当前选择的用户:', newValue);
+  formInline.username = newValue
+  onSubmit(formInline)
+});
 
 // 日期选择器中禁用今天之后的日期
 const disabledDate = (date) => {
@@ -117,6 +124,7 @@ onMounted(() => {
       return date.toLocaleString().split(' ')[0].replaceAll('/', '-'); // 获取YYYY-MM-DD格式
     })()
   }
+  formInline.username = localStorage.getItem('selectedUser')
   onSubmit(); // 调用 onSubmit 函数进行查询
 
 });

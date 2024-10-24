@@ -57,10 +57,20 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, nextTick } from 'vue';
+import { ref, inject, watch, onMounted, onUnmounted, nextTick } from 'vue';
 import * as echarts from 'echarts';
 import { monthData, categoryData, monthCateData } from '@/request/api';
 import { useRouter } from 'vue-router';
+
+// 注入来自导航栏的 selectedUser
+const selectedUser = inject('selectedUser');
+const username = ref('')
+
+// 监视 selectedUser 的变化
+watch(selectedUser, (newValue) => {
+  console.log('当前选择的用户:', newValue);
+  // 可以在这里执行其他逻辑，比如发起请求等
+});
 
 const router = useRouter();
 
@@ -218,7 +228,7 @@ const initPieChart = async () => {
           name: '分类',
           type: 'pie',
           radius: '80%',
-          center: ['50%', '60%'],
+          center: ['55%', '50%'],
           data: chartCategoryData.categories.map((category, index) => ({
             name: category,
             value: chartCategoryData.totalAmounts[index]
