@@ -24,7 +24,7 @@
         </el-form-item>
       </el-form>
 
-      <div ref="pieChartDom" style="width: 800px; height: 400px;"></div>
+      <div ref="pieChartDom" style="width: 100%; height: 400px;"></div>
     </div>
 
     <div class="table-container">
