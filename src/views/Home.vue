@@ -3,11 +3,11 @@
   <div class="main-container">
     <div class="charts-row">
       <div class="chart-container">
-        <p style="font-weight: bold;">{{ monthDataForm.year }}年：月支出统计表</p>
+        <p style="font-weight: bold;">{{ monthDataForm.byYear }}年：月支出统计表</p>
 
         <el-form :inline="true" :model="monthDataForm" class="demo-form-inline">
           <el-form-item label="统计年份">
-            <el-date-picker v-model="monthDataForm.year" type="year" :disabled-date="disabledDate"
+            <el-date-picker v-model="monthDataForm.byYear" type="year" :disabled-date="disabledDate"
               @change="onMonthDataFormChange" value-format="YYYY" placeholder="统计年份" clearable />
           </el-form-item>
         </el-form>
@@ -16,11 +16,11 @@
       </div>
 
       <div class="pie-container">
-        <p style="font-weight: bold;">{{ categoryDataForm.year }}年：分类支出统计表</p>
+        <p style="font-weight: bold;">{{ categoryDataForm.byYear }}年：分类支出统计表</p>
 
         <el-form :inline="true" :model="categoryDataForm" class="demo-form-inline">
           <el-form-item label="统计年份">
-            <el-date-picker v-model="categoryDataForm.year" type="year" :disabled-date="disabledDate"
+            <el-date-picker v-model="categoryDataForm.byYear" type="year" :disabled-date="disabledDate"
               @change="onCategoryDataFormChange" value-format="YYYY" placeholder="统计年份" clearable />
           </el-form-item>
         </el-form>
@@ -30,11 +30,11 @@
     </div>
 
     <div class="table-container">
-      <p style="font-weight: bold;">{{ monthCategoryDataForm.year }}年：月分类支出统计表</p>
+      <p style="font-weight: bold;">{{ monthCategoryDataForm.byYear }}年：月分类支出统计表</p>
 
       <el-form :inline="true" :model="monthCategoryDataForm" class="demo-form-inline">
         <el-form-item label="统计年份">
-          <el-date-picker v-model="monthCategoryDataForm.year" type="year" :disabled-date="disabledDate"
+          <el-date-picker v-model="monthCategoryDataForm.byYear" type="year" :disabled-date="disabledDate"
             @change="onMonthCategoryDataFormChange" value-format="YYYY" placeholder="统计年份" clearable />
         </el-form-item>
       </el-form>
