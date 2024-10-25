@@ -1,34 +1,36 @@
 <!-- src/views/Home.vue -->
 <template>
   <div class="main-container">
-    <div class="chart-container">
-      <p>{{ monthDataForm.year }}年：月支出统计表</p>
+    <div class="charts-row">
+      <div class="chart-container">
+        <p style="font-weight: bold;">{{ monthDataForm.year }}年：月支出统计表</p>
 
-      <el-form :inline="true" :model="monthDataForm" class="demo-form-inline">
-        <el-form-item label="统计年份">
-          <el-date-picker v-model="monthDataForm.year" type="year" :disabled-date="disabledDate"
-            @change="onMonthDataFormChange" value-format="YYYY" placeholder="统计年份" clearable />
-        </el-form-item>
-      </el-form>
+        <el-form :inline="true" :model="monthDataForm" class="demo-form-inline">
+          <el-form-item label="统计年份">
+            <el-date-picker v-model="monthDataForm.year" type="year" :disabled-date="disabledDate"
+              @change="onMonthDataFormChange" value-format="YYYY" placeholder="统计年份" clearable />
+          </el-form-item>
+        </el-form>
 
-      <div ref="chartDom" style="width: 100%; height: 400px;"></div>
-    </div>
+        <div ref="chartDom" style="width: 600px;height: 400px;"></div>
+      </div>
 
-    <div class="pie-container">
-      <p>{{ categoryDataForm.year }}年：分类支出统计表</p>
+      <div class="pie-container">
+        <p style="font-weight: bold;">{{ categoryDataForm.year }}年：分类支出统计表</p>
 
-      <el-form :inline="true" :model="categoryDataForm" class="demo-form-inline">
-        <el-form-item label="统计年份">
-          <el-date-picker v-model="categoryDataForm.year" type="year" :disabled-date="disabledDate"
-            @change="onCategoryDataFormChange" value-format="YYYY" placeholder="统计年份" clearable />
-        </el-form-item>
-      </el-form>
+        <el-form :inline="true" :model="categoryDataForm" class="demo-form-inline">
+          <el-form-item label="统计年份">
+            <el-date-picker v-model="categoryDataForm.year" type="year" :disabled-date="disabledDate"
+              @change="onCategoryDataFormChange" value-format="YYYY" placeholder="统计年份" clearable />
+          </el-form-item>
+        </el-form>
 
-      <div ref="pieChartDom" style="width: 100%; height: 400px;"></div>
+        <div ref="pieChartDom" style="width: 600px;height: 400px;"></div>
+      </div>
     </div>
 
     <div class="table-container">
-      <p>{{ monthCategoryDataForm.year }}年：月分类支出统计表</p>
+      <p style="font-weight: bold;">{{ monthCategoryDataForm.year }}年：月分类支出统计表</p>
 
       <el-form :inline="true" :model="monthCategoryDataForm" class="demo-form-inline">
         <el-form-item label="统计年份">
@@ -272,31 +274,32 @@ onUnmounted(() => {
 .main-container {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  /* 使内容从左上角开始 */
-  /* padding: 10px; */
-  /* 根据需要调整内边距 */
-  /* padding: 3rem; */
 }
 
-.chart-container {
-  width: 800px;
-  height: 400px;
+.charts-row {
+  display: flex;
+  justify-content: space-between;
+  /* 可以根据需要调整 */
   margin-bottom: 20px;
-  padding: 3rem;
-  /* 根据需要调整外边距 */
+  /* 为了给下方表格留出一些空间 */
+  /* width: 100%; */
+}
+
+.chart-container,
+.pie-container {
+  flex: 1;
+  /* 让两个容器平分可用宽度 */
+  margin-right: 10px;
+  /* 为了给两个容器之间留出间隔 */
 }
 
 .pie-container {
-  width: 800px;
-  height: 400px;
-  margin-bottom: 20px;
-  padding: 3rem;
-  /* 根据需要调整外边距 */
+  margin-right: 0;
+  /* 最后一个容器不需要右边距 */
 }
 
 .table-container {
-  margin-top: 40px;
-  padding: 3rem;
+  width: 100%;
+  /* 确保表格容器占满全宽 */
 }
 </style>

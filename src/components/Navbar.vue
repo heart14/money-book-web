@@ -25,7 +25,7 @@
 
 <script setup>
 // 这里可以添加任何需要的逻辑
-import { ref, onMounted, defineEmits } from 'vue';
+import { ref, onMounted } from 'vue';
 
 const emit = defineEmits();
 const selectedUser = ref('');
