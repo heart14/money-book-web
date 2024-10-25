@@ -4,14 +4,17 @@ export function queryRecord(params) {
     return service.get('/daily/query', { params })
 }
 
-export function monthData(year) {
-    return service.get(`/daily/monthData/${year}`)
+export function monthData(params) {
+    const queryString = new URLSearchParams(params).toString()
+    return service.get(`/daily/monthData?${queryString}`)
 }
 
-export function categoryData(year) {
-    return service.get(`/daily/categoryData/${year}`)
+export function categoryData(params) {
+    const queryString = new URLSearchParams(params).toString()
+    return service.get(`/daily/categoryData?${queryString}`)
 }
 
-export function monthCateData(year) {
-    return service.get(`/daily/monthCategoryData/${year}`)
+export function monthCateData(params) {
+    const queryString = new URLSearchParams(params).toString()
+    return service.get(`/daily/monthCategoryData?${queryString}`)
 }

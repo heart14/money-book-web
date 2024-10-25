@@ -64,17 +64,21 @@ import * as echarts from 'echarts';
 import { monthData, categoryData, monthCateData } from '@/request/api';
 import { useRouter } from 'vue-router';
 
+const router = useRouter();
+
 // 注入来自导航栏的 selectedUser
 const selectedUser = inject('selectedUser');
-const username = ref('')
-
 // 监视 selectedUser 的变化
 watch(selectedUser, (newValue) => {
   console.log('当前选择的用户:', newValue);
   // 可以在这里执行其他逻辑，比如发起请求等
+  monthDataForm.value.username = newValue
+  categoryDataForm.value.username = newValue
+  monthCategoryDataForm.value.username = newValue
+  fetchMonthData()
+  fetchCategoryData()
+  fetchMonthCateData()
 });
-
-const router = useRouter();
 
 // 月份统计图CHART数据
 const chartMonthData = ref({
@@ -86,21 +90,23 @@ const chartCategoryData = ref({
   categories: [],
   totalAmounts: []
 });
-
 // 月份分类统计表TABLE数据
 const monthCategoryData = ref([])
 
 // 月份统计图查询年份参数
 const monthDataForm = ref({
-  year: new Date().getFullYear()
+  username: '',
+  byYear: new Date().getFullYear()
 })
 // 分类统计图查询年份参数
 const categoryDataForm = ref({
-  year: new Date().getFullYear()
+  username: '',
+  byYear: new Date().getFullYear()
 })
 // 月份分类统计表查询参数
 const monthCategoryDataForm = ref({
-  year: new Date().getFullYear()
+  username: '',
+  byYear: new Date().getFullYear()
 })
 
 
@@ -113,9 +119,7 @@ let pieChartInstance = null;
 
 // 查询月份统计图数据
 const fetchMonthData = async () => {
-  const res = await monthData(monthDataForm.value.year);
-  console.log('month data')
-  console.log(res.data)
+  const res = await monthData(monthDataForm.value);
   chartMonthData.months = res.data.map(item => item.byMonth)
   chartMonthData.value = res.data.map(item => item.totalAmount)
   initChart();
@@ -123,21 +127,15 @@ const fetchMonthData = async () => {
 
 // 查询分类统计图数据
 const fetchCategoryData = async () => {
-  console.log("?????1")
-  const res = await categoryData(categoryDataForm.value.year);
-  console.log('category data')
-  console.log(res.data)
+  const res = await categoryData(categoryDataForm.value);
   chartCategoryData.categories = res.data.map(item => item.category)
   chartCategoryData.totalAmounts = res.data.map(item => item.totalAmount)
-  console.log(chartCategoryData)
   initPieChart();
 }
 
 // 查询月份分类统计表数据
 const fetchMonthCateData = async () => {
-  const res = await monthCateData(monthCategoryDataForm.value.year);
-  console.log('month category data')
-  console.log(res.data)
+  const res = await monthCateData(monthCategoryDataForm.value);
   monthCategoryData.value = res.data
 }
 
@@ -199,7 +197,6 @@ const initChart = async () => {
       // params.dataIndex 是点击的柱子索引
       const monthIndex = params.dataIndex;
       const selectedMonth = chartMonthData.months[monthIndex];
-      console.log(router);
       // 使用 Vue Router 进行路由切换
       router.push({
         name: 'About', // 目标页面的路由名称
@@ -258,6 +255,11 @@ const disabledDate = (date) => {
 onMounted(async () => {
   chartInstance = echarts.init(chartDom.value);
   pieChartInstance = echarts.init(pieChartDom.value);
+  // 页面加载时从localStorage取当前所选用户值
+  const u = localStorage.getItem('selectedUser')
+  monthDataForm.value.username = u
+  categoryDataForm.value.username = u
+  monthCategoryDataForm.value.username = u
   fetchMonthData();
   fetchCategoryData();
   fetchMonthCateData()
