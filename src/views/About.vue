@@ -13,9 +13,7 @@
       </el-form-item>
       <el-form-item label="账单分类">
         <el-select v-model="formInline.category" placeholder="账单分类" clearable>
-          <el-option label="餐饮" value="餐饮" />
-          <el-option label="交通" value="交通" />
-          <el-option label="汽车" value="汽车" />
+          <el-option v-for="(item, index) in categoryOptions" :key="index" :label="item" :value="item" />
         </el-select>
       </el-form-item>
       <el-form-item label="查询维度">
@@ -58,6 +56,8 @@ import { queryRecord } from '@/request/api';
 import { ElTable, ElTableColumn } from 'element-plus';
 import { useRoute, useRouter } from 'vue-router';
 
+const categoryOptions = ref(["餐饮", "住房", "交通", "旅行", "服饰", "汽车", "宠物", "生活缴费", "医疗", "教育", "数码", "文娱", "日用", "转账", "其它"])
+
 const formInline = reactive({
   title: '',
   type: '',
@@ -65,7 +65,7 @@ const formInline = reactive({
   byYear: '',
   byMonth: '',
   byDate: '',
-  username:''
+  username: ''
 })
 const queryType = ref('日')
 const data = ref([])
