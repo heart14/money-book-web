@@ -1,6 +1,20 @@
 <!-- src/views/Home.vue -->
 <template>
   <div class="main-container">
+    <div class="top-container">
+      <span>选择年份：</span>
+      <el-select v-model="selectedYear" placeholder="选择年份" class="select">
+        <el-option label="2020" value="2020"></el-option>
+        <el-option label="2021" value="2021"></el-option>
+        <el-option label="2022" value="2022"></el-option>
+      </el-select>
+      <span>总计收入：</span>
+      <el-input v-model="totalIncome" placeholder="总计收入" class="input"></el-input>
+      <span>总计支出：</span>
+      <el-input v-model="totalExpense" placeholder="总计支出" class="input"></el-input>
+    </div>
+
+
     <div class="charts-row">
       <div class="chart-container">
         <p style="font-weight: bold;">{{ monthDataForm.byYear }}年：月支出统计表</p>
@@ -303,5 +317,21 @@ onUnmounted(() => {
 .table-container {
   width: 100%;
   /* 确保表格容器占满全宽 */
+}
+
+.top-container {
+  display: flex;
+  align-items: center;
+  /* 垂直居中 */
+  width: 100%;
+  background-color: #f5f5f5;
+  /* 浅灰色背景 */
+  padding: 10px;
+}
+
+.top-container .el-select,
+.top-container .el-input {
+  margin: 0 10px;
+  /* 组件之间的间距 */
 }
 </style>
