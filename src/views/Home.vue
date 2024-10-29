@@ -5,7 +5,7 @@
       <el-form :inline="true" :model="topFormData" class="top-form-inline">
         <el-form-item label="账单年份">
           <el-date-picker v-model="topFormData.byYear" type="year" :disabled-date="disabledDate"
-            @change="onMonthDataFormChange" value-format="YYYY" placeholder="账单年份" clearable />
+            @change="onTopFormDataChange" value-format="YYYY" placeholder="账单年份" clearable />
         </el-form-item>
         <el-form-item label="总计收入">
           <el-input v-model="topFormData.income" placeholder="总计收入"  disabled/>
@@ -96,12 +96,21 @@ watch(selectedUser, (newValue) => {
 });
 
 const topFormData = ref({
-  byYear:'',
+  byYear: new Date().getFullYear().toString(),
   income:'',
   expenses:''
 })
 
 
+// 修改统计年份时重新加载页面
+const onTopFormDataChange = () => {
+  monthDataForm.value.byYear = topFormData.value.byYear
+  categoryDataForm.value.byYear = topFormData.value.byYear
+  monthCategoryDataForm.value.byYear = topFormData.value.byYear
+  fetchMonthData();
+  fetchCategoryData();
+  fetchMonthCateData()
+}
 
 
 // 月份统计图CHART数据
@@ -120,17 +129,17 @@ const monthCategoryData = ref([])
 // 月份统计图查询年份参数
 const monthDataForm = ref({
   username: '',
-  byYear: new Date().getFullYear()
+  byYear: ''
 })
 // 分类统计图查询年份参数
 const categoryDataForm = ref({
   username: '',
-  byYear: new Date().getFullYear()
+  byYear: ''
 })
 // 月份分类统计表查询参数
 const monthCategoryDataForm = ref({
   username: '',
-  byYear: new Date().getFullYear()
+  byYear: ''
 })
 
 
@@ -284,6 +293,12 @@ onMounted(async () => {
   monthDataForm.value.username = u
   categoryDataForm.value.username = u
   monthCategoryDataForm.value.username = u
+  monthDataForm.value.byYear = topFormData.value.byYear
+  categoryDataForm.value.byYear = topFormData.value.byYear
+  monthCategoryDataForm.value.byYear = topFormData.value.byYear
+  console.log(monthDataForm)
+  console.log(categoryDataForm)
+  console.log(monthCategoryDataForm)
   fetchMonthData();
   fetchCategoryData();
   fetchMonthCateData()
