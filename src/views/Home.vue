@@ -2,18 +2,19 @@
 <template>
   <div class="main-container">
     <div class="top-container">
-      <span>选择年份：</span>
-      <el-select v-model="selectedYear" placeholder="选择年份" class="select">
-        <el-option label="2020" value="2020"></el-option>
-        <el-option label="2021" value="2021"></el-option>
-        <el-option label="2022" value="2022"></el-option>
-      </el-select>
-      <span>总计收入：</span>
-      <el-input v-model="totalIncome" placeholder="总计收入" class="input"></el-input>
-      <span>总计支出：</span>
-      <el-input v-model="totalExpense" placeholder="总计支出" class="input"></el-input>
+      <el-form :inline="true" :model="topFormData" class="top-form-inline">
+        <el-form-item label="账单年份">
+          <el-date-picker v-model="topFormData.byYear" type="year" :disabled-date="disabledDate"
+            @change="onMonthDataFormChange" value-format="YYYY" placeholder="账单年份" clearable />
+        </el-form-item>
+        <el-form-item label="总计收入">
+          <el-input v-model="topFormData.income" placeholder="总计收入"  disabled/>
+        </el-form-item>
+        <el-form-item label="总计支出">
+          <el-input v-model="topFormData.expenses" placeholder="总计支出" disabled />
+        </el-form-item>
+      </el-form>
     </div>
-
 
     <div class="charts-row">
       <div class="chart-container">
@@ -93,6 +94,15 @@ watch(selectedUser, (newValue) => {
   fetchCategoryData()
   fetchMonthCateData()
 });
+
+const topFormData = ref({
+  byYear:'',
+  income:'',
+  expenses:''
+})
+
+
+
 
 // 月份统计图CHART数据
 const chartMonthData = ref({
@@ -320,18 +330,18 @@ onUnmounted(() => {
 }
 
 .top-container {
-  display: flex;
-  align-items: center;
-  /* 垂直居中 */
-  width: 100%;
   background-color: #f5f5f5;
   /* 浅灰色背景 */
-  padding: 10px;
+  padding-top: 10px;
+  padding-bottom: 0px;
+  border-radius:  5px;
 }
 
-.top-container .el-select,
-.top-container .el-input {
-  margin: 0 10px;
-  /* 组件之间的间距 */
+.top-form-inline {
+  text-align: center;
+}
+
+.top-form-inline .el-input {
+  width: 240px;
 }
 </style>
