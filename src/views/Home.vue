@@ -8,7 +8,7 @@
             @change="onTopFormDataChange" value-format="YYYY" placeholder="账单年份" clearable />
         </el-form-item>
         <el-form-item label="总计收入">
-          <el-input v-model="topFormData.income" placeholder="总计收入"  disabled/>
+          <el-input v-model="topFormData.income" placeholder="总计收入" disabled />
         </el-form-item>
         <el-form-item label="总计支出">
           <el-input v-model="topFormData.expenses" placeholder="总计支出" disabled />
@@ -76,7 +76,7 @@
 <script setup>
 import { ref, inject, watch, onMounted, onUnmounted, nextTick } from 'vue';
 import * as echarts from 'echarts';
-import { monthData, categoryData, monthCateData } from '@/request/api';
+import { annualDataByYear, monthData, categoryData, monthCateData } from '@/request/api';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -90,23 +90,29 @@ watch(selectedUser, (newValue) => {
   monthDataForm.value.username = newValue
   categoryDataForm.value.username = newValue
   monthCategoryDataForm.value.username = newValue
+  topFormData.value.username = newValue
+  // 切换所选用户时重新加载页面数据与图表
+  fetchAnnualDataByYear();
   fetchMonthData()
   fetchCategoryData()
   fetchMonthCateData()
 });
 
+// 顶部统计年份与年度收支数据
 const topFormData = ref({
   byYear: new Date().getFullYear().toString(),
-  income:'',
-  expenses:''
+  income: '',
+  expenses: '',
+  username: ''
 })
 
 
-// 修改统计年份时重新加载页面
+// 修改顶部统计年份时重新加载页面数据与图表
 const onTopFormDataChange = () => {
   monthDataForm.value.byYear = topFormData.value.byYear
   categoryDataForm.value.byYear = topFormData.value.byYear
   monthCategoryDataForm.value.byYear = topFormData.value.byYear
+  fetchAnnualDataByYear();
   fetchMonthData();
   fetchCategoryData();
   fetchMonthCateData()
@@ -149,6 +155,13 @@ let chartInstance = null;
 // 分类统计图DOM 元素
 const pieChartDom = ref(null);
 let pieChartInstance = null;
+
+// 查询年度收支数据
+const fetchAnnualDataByYear = async () => {
+  const res = await annualDataByYear(topFormData.value)
+  topFormData.value.income = res.data.totalIncome
+  topFormData.value.expenses = res.data.totalExpense
+}
 
 // 查询月份统计图数据
 const fetchMonthData = async () => {
@@ -299,6 +312,8 @@ onMounted(async () => {
   console.log(monthDataForm)
   console.log(categoryDataForm)
   console.log(monthCategoryDataForm)
+  // 页面加载时请求后台获取数据
+  fetchAnnualDataByYear();
   fetchMonthData();
   fetchCategoryData();
   fetchMonthCateData()
@@ -349,7 +364,7 @@ onUnmounted(() => {
   /* 浅灰色背景 */
   padding-top: 10px;
   padding-bottom: 0px;
-  border-radius:  5px;
+  border-radius: 5px;
 }
 
 .top-form-inline {
