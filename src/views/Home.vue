@@ -1,6 +1,19 @@
 <!-- src/views/Home.vue -->
 <template>
   <div class="main-container">
+    <!-- 年收入支出统计图 -->
+    <div class="charts-row">
+      <div class="chart-container">
+        <p style="font-weight: bold;">年收入统计图</p>
+        <div ref="incomeChartDom" style="width: 600px;height: 400px;"></div>
+      </div>
+
+      <div class="chart-container">
+        <p style="font-weight: bold;">年支出统计图</p>
+        <div ref="expenseChartDom" style="width: 600px;height: 400px;"></div>
+      </div>
+    </div>
+    <!-- 年度收入支出表单 -->
     <div class="top-container">
       <el-form :inline="true" :model="topFormData" class="top-form-inline">
         <el-form-item label="账单年份">
@@ -15,10 +28,10 @@
         </el-form-item>
       </el-form>
     </div>
-
+    <!-- 月支出统计图 -->
     <div class="charts-row">
       <div class="chart-container">
-        <p style="font-weight: bold;">{{ monthDataForm.byYear }}年：月支出统计表</p>
+        <p style="font-weight: bold;">{{ monthDataForm.byYear }}年：月支出统计图</p>
 
         <el-form :inline="true" :model="monthDataForm" class="demo-form-inline">
           <el-form-item label="统计年份">
@@ -29,9 +42,9 @@
 
         <div ref="chartDom" style="width: 600px;height: 400px;"></div>
       </div>
-
+      <!-- 分类支出统计图 -->
       <div class="pie-container">
-        <p style="font-weight: bold;">{{ categoryDataForm.byYear }}年：分类支出统计表</p>
+        <p style="font-weight: bold;">{{ categoryDataForm.byYear }}年：分类支出统计图</p>
 
         <el-form :inline="true" :model="categoryDataForm" class="demo-form-inline">
           <el-form-item label="统计年份">
@@ -43,17 +56,17 @@
         <div ref="pieChartDom" style="width: 600px;height: 400px;"></div>
       </div>
     </div>
-
+    <!-- 月分类支出统计表 -->
     <div class="table-container">
       <p style="font-weight: bold;">{{ monthCategoryDataForm.byYear }}年：月分类支出统计表</p>
-
+      <!-- 查询表单 -->
       <el-form :inline="true" :model="monthCategoryDataForm" class="demo-form-inline">
         <el-form-item label="统计年份">
           <el-date-picker v-model="monthCategoryDataForm.byYear" type="year" :disabled-date="disabledDate"
             @change="onMonthCategoryDataFormChange" value-format="YYYY" placeholder="统计年份" clearable />
         </el-form-item>
       </el-form>
-
+      <!-- 统计表格内容 -->
       <el-table :data="monthCategoryData" stripe style="width: 100%">
         <el-table-column prop="category" label="分类" width="100px"></el-table-column>
         <el-table-column prop="01月" label="01月" width="100px"></el-table-column>
@@ -76,7 +89,7 @@
 <script setup>
 import { ref, inject, watch, onMounted, onUnmounted, nextTick } from 'vue';
 import * as echarts from 'echarts';
-import { annualDataByYear, monthData, categoryData, monthCateData } from '@/request/api';
+import { annualData, annualDataByYear, monthData, categoryData, monthCateData } from '@/request/api';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -118,6 +131,11 @@ const onTopFormDataChange = () => {
   fetchMonthCateData()
 }
 
+// 年收入支出统计图CHART数据
+const chartAnnualData = ref({
+  income: [],
+  expenses: []
+})
 
 // 月份统计图CHART数据
 const chartMonthData = ref({
@@ -149,12 +167,30 @@ const monthCategoryDataForm = ref({
 })
 
 
+// 年收入统计图DOM元素
+const incomeChartDom = ref(null);
+let incomeChartInstance = null;
+// 年支出统计图DOM元素
+const expenseChartDom = ref(null);
+let expenseChartInstance = null;
 // 月份统计图DOM元素
 const chartDom = ref(null);
 let chartInstance = null;
 // 分类统计图DOM 元素
 const pieChartDom = ref(null);
 let pieChartInstance = null;
+
+// 查询年收入支出统计图数据
+const fetchAnnualData = async () => {
+  const res = await annualData(localStorage.getItem('selectedUser'));
+  chartAnnualData.value.income = res.data.income
+  chartAnnualData.value.expenses = res.data.expenses
+  console.log('---')
+  console.log(chartAnnualData)
+  console.log('---')
+  initIncomeChart();
+  initExpenseChart();
+}
 
 // 查询年度收支数据
 const fetchAnnualDataByYear = async () => {
@@ -199,6 +235,72 @@ const onMonthCategoryDataFormChange = () => {
   fetchMonthCateData()
 }
 
+
+// 初始化年收入统计图的方法
+const initIncomeChart = async () => {
+  await nextTick(); // 确保DOM已经渲染完成
+
+  if (incomeChartInstance && chartAnnualData.value) {
+    const option = {
+      // chartAnnualData.value作为数据源
+      title: {
+      },
+      tooltip: {
+        trigger: 'axis', // 触发类型：'axis' 表示坐标轴触发
+        axisPointer: {
+          type: 'line' // 指示器类型：'line' 表示直线指示器
+        }
+      },
+      xAxis: {
+        data: chartAnnualData.value.income.map(item => item.date)
+      },
+      yAxis: { type: 'value' },
+      series: [{
+        name: '年收入',
+        type: 'line',
+        data: chartAnnualData.value.income.map(item => item.totalAmount),
+        smooth: true, //平滑曲线
+        itemStyle: {
+          // color: '#5470c6'
+        }
+      }]
+    };
+    incomeChartInstance.setOption(option);
+  }
+};
+
+// 初始化年支出统计图的方法
+const initExpenseChart = async () => {
+  await nextTick(); // 确保DOM已经渲染完成
+
+  if (expenseChartInstance && chartAnnualData.value) {
+    const option = {
+      // chartAnnualData.value作为数据源
+      title: {
+      },
+      tooltip: {
+        trigger: 'axis', // 触发类型：'axis' 表示坐标轴触发
+        axisPointer: {
+          type: 'line' // 指示器类型：'line' 表示直线指示器
+        }
+      },
+      xAxis: {
+        data: chartAnnualData.value.expenses.map(item => item.date)
+      },
+      yAxis: { type: 'value' },
+      series: [{
+        name: '年支出',
+        type: 'line',
+        data: chartAnnualData.value.expenses.map(item => item.totalAmount),
+        smooth: true, //平滑曲线
+        itemStyle: {
+          // color: '#5470c6'
+        }
+      }]
+    };
+    expenseChartInstance.setOption(option);
+  }
+};
 
 // 初始化月份统计图的方法
 const initChart = async () => {
@@ -301,6 +403,9 @@ const disabledDate = (date) => {
 onMounted(async () => {
   chartInstance = echarts.init(chartDom.value);
   pieChartInstance = echarts.init(pieChartDom.value);
+  incomeChartInstance = echarts.init(incomeChartDom.value)
+  expenseChartInstance = echarts.init(expenseChartDom.value)
+
   // 页面加载时从localStorage取当前所选用户值
   const u = localStorage.getItem('selectedUser')
   monthDataForm.value.username = u
@@ -313,6 +418,7 @@ onMounted(async () => {
   console.log(categoryDataForm)
   console.log(monthCategoryDataForm)
   // 页面加载时请求后台获取数据
+  fetchAnnualData();
   fetchAnnualDataByYear();
   fetchMonthData();
   fetchCategoryData();
