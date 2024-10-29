@@ -67,7 +67,7 @@
         </el-form-item>
       </el-form>
       <!-- 统计表格内容 -->
-      <el-table :data="monthCategoryData" stripe style="width: 100%">
+      <el-table :data="monthCategoryData" stripe style="width: 100%" show-summary>
         <el-table-column prop="category" label="分类" width="100px"></el-table-column>
         <el-table-column prop="01月" label="01月" width="100px"></el-table-column>
         <el-table-column prop="02月" label="02月" width="100px"></el-table-column>

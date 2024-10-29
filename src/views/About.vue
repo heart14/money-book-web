@@ -37,7 +37,7 @@
     </el-form>
 
 
-    <el-table :data="data" height="1000px" style="width: 100%">
+    <el-table :data="data" style="width: 100%" show-summary>
       <el-table-column prop="date" label="日期" width="180" sortable></el-table-column>
       <el-table-column prop="type" label="类型" width="180"></el-table-column>
       <el-table-column prop="category" label="分类" width="180"></el-table-column>
