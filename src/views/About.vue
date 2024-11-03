@@ -56,7 +56,7 @@ import { queryRecord } from '@/request/api';
 import { ElTable, ElTableColumn } from 'element-plus';
 import { useRoute, useRouter } from 'vue-router';
 
-const categoryOptions = ref(["餐饮", "住房", "交通", "旅行", "服饰", "汽车", "宠物", "生活缴费", "医疗", "教育", "数码", "文娱", "日用", "转账", "其它"])
+const categoryOptions = ref(["餐饮", "住房", "交通", "旅行", "服饰", "汽车", "宠物", "生活缴费", "医疗", "教育", "数码", "文娱", "日用", "转账", "其它", "现金", "薪酬"])
 
 const formInline = reactive({
   title: '',
