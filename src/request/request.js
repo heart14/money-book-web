@@ -3,8 +3,7 @@ import { ElMessage } from 'element-plus'
 
 // 创建axios实例
 const service = axios.create({
-  // baseURL: 'http://localhost:8080',//url = base url + request url
-  baseURL: 'http://110.40.192.87:9002',//url = base url + request url
+  baseURL: 'http://localhost:8080',//url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 5000 // 请求超时时间
 })
