@@ -8,7 +8,7 @@
         <li><router-link to="/">概览</router-link></li>
         <li><router-link to="/about">明细</router-link></li>
         <li><router-link to="/services">日历</router-link></li>
-          <!-- <li><router-link to="/contact">Contact</router-link></li> -->
+        <li><router-link to="/contact">记账</router-link></li>
         <li>
           <div class="custom-select-container">
             <select v-model="selectedUser" @change="updateValue" class="custom-select">

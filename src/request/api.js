@@ -1,5 +1,10 @@
 import service from './request'
 
+// 记一笔
+export function saveRecord(params) {
+    return service.get('/daily/record', { params })
+}
+
 // 查询记账记录
 export function queryRecord(params) {
     return service.get('/daily/query', { params })
