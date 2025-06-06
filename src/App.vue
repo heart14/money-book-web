@@ -1,27 +1,49 @@
 <template>
-  <div id="app" class="app-container">
-    <Navbar @update:selectedUser="handleUserChange"/>
-    <router-view />
-  </div>
+  <ElConfigProvider size="default" :locale="locales[language]" :z-index="3000">
+    <RouterView></RouterView>
+  </ElConfigProvider>
 </template>
 
-<script setup>
-import { ref, provide } from 'vue';
-import Navbar from './components/Navbar.vue'
+<script setup lang="ts">
+  import { useUserStore } from './store/modules/user'
+  import zh from 'element-plus/es/locale/lang/zh-cn'
+  import en from 'element-plus/es/locale/lang/en'
+  import { systemUpgrade } from './utils/upgrade'
+  import { UserService } from './api/usersApi'
+  import { ApiStatus } from './utils/http/status'
+  import { checkStorageCompatibility } from './utils/storage/storage'
+  import { setThemeTransitionClass } from './utils/theme/animation'
 
-const selectedUser = ref(''); // 存储选中的值
+  const userStore = useUserStore()
+  const { language } = storeToRefs(userStore)
 
-const handleUserChange = (value) => {
-  selectedUser.value = value; // 更新选中的值
-}
+  const locales = {
+    zh: zh,
+    en: en
+  }
 
-// 提供选中的值以便其他组件使用
-provide('selectedUser', selectedUser);
+  onBeforeMount(() => {
+    setThemeTransitionClass(true)
+  })
+
+  onMounted(() => {
+    // 检查存储兼容性
+    checkStorageCompatibility()
+    // 提升暗黑主题下页面刷新视觉体验
+    setThemeTransitionClass(false)
+    // 系统升级
+    systemUpgrade()
+    // 获取用户信息
+    getUserInfo()
+  })
+
+  // 获取用户信息
+  const getUserInfo = async () => {
+    if (userStore.isLogin) {
+      const res = await UserService.getUserInfo()
+      if (res.code === ApiStatus.success) {
+        userStore.setUserInfo(res.data)
+      }
+    }
+  }
 </script>
-
-<style scoped>
-.app-container {
-  display: flex;
-  flex-direction: column;
-}
-</style>
