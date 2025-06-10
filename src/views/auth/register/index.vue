@@ -81,6 +81,8 @@
   import { ElMessage } from 'element-plus'
   import type { FormInstance, FormRules } from 'element-plus'
   import { useI18n } from 'vue-i18n'
+  import { UserService } from '@/api/usersApi'
+  import { ApiStatus } from '@/utils/http/status'
 
   const { t } = useI18n()
 
@@ -149,12 +151,20 @@
       await formRef.value.validate()
       loading.value = true
 
-      // 模拟注册请求
-      setTimeout(() => {
+      const params = {
+        userName: formData.username,
+        password: formData.password
+      }
+
+      const res = await UserService.register(params)
+      if (res.code === ApiStatus.success) {
         loading.value = false
         ElMessage.success('注册成功')
         toLogin()
-      }, 1000)
+      } else {
+        ElMessage.error(res.msg)
+        loading.value = false
+      }
     } catch (error) {
       console.log('验证失败', error)
     }

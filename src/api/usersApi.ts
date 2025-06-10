@@ -20,6 +20,14 @@ export class UserService {
     })
   }
 
+  // 注册
+  static register(params: LoginParams) {
+    return request.post<BaseResult>({
+      url: '/user/save',
+      params
+    })
+  }
+
   // 获取用户信息
   static getUserInfo() {
     return request.get<BaseResult>({
