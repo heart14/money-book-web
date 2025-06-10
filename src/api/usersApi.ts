@@ -23,7 +23,7 @@ export class UserService {
   // 获取用户信息
   static getUserInfo() {
     return request.get<BaseResult>({
-      url: '/api/user/info'
+      url: '/user/info'
     })
   }
 
