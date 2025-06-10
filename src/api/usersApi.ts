@@ -15,7 +15,7 @@ export class UserService {
   // 登录
   static login(params: LoginParams) {
     return request.post<BaseResult>({
-      url: '/system/login',
+      url: '/auth/login',
       params
     })
   }
@@ -23,7 +23,7 @@ export class UserService {
   // 注册
   static register(params: LoginParams) {
     return request.post<BaseResult>({
-      url: '/user/save',
+      url: '/auth/register',
       params
     })
   }

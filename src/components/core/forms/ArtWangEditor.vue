@@ -61,7 +61,7 @@
         // 注意 ${import.meta.env.VITE_BASE_URL} 写你自己的后端服务地址
         server,
         // 传递token
-        headers: { Authorization: accessToken },
+        headers: { Authorization: 'Bearer' + accessToken },
         // 单个文件上传成功之后
         onSuccess() {
           ElMessage.success(`图片上传成功 ${EmojiText[200]}`)
