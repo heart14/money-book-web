@@ -119,6 +119,9 @@
     "success": {
       "title": "Login successful",
       "message": "Welcome back"
+    },
+    "fail": {
+      "title": "Login failed"
     }
   },
   "forgetPassword": {

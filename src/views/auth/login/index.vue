@@ -258,6 +258,7 @@
               }
             }
           } else {
+            ElMessage.error(t('login.fail.title') + ' ' + res.msg)
             loading.value = false
             resetDragVerify()
           }
