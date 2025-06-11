@@ -143,7 +143,7 @@
                 <div class="user-head">
                   <img class="cover" src="@imgs/user/avatar.png" style="float: left" />
                   <div class="user-wrap">
-                    <span class="name">{{ userInfo.userName }}</span>
+                    <span class="name">{{ userInfo.nickname }}</span>
                     <span class="email">art.design@gmail.com</span>
                   </div>
                 </div>

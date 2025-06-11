@@ -3,8 +3,9 @@ import { LocationQueryRaw } from 'vue-router'
 
 // 用户信息
 export interface UserInfo {
-  userId: number // 用户ID
-  userName: string // 用户名
+  uid: number // 用户ID
+  username: string // 用户账号
+  nickname: string // 用户昵称
   roles: string[] // 角色
   buttons: string[] // 按钮
 }
