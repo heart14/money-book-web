@@ -2,7 +2,7 @@ import request from '@/utils/http'
 import { BaseResult } from '@/types/axios'
 
 interface LoginParams {
-  userName: string
+  username: string
   password: string
 }
 

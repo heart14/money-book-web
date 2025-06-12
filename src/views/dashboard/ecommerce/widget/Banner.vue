@@ -1,7 +1,7 @@
 <template>
   <ArtBasicBanner
     class="banner"
-    :title="`欢迎回来 ${userInfo.userName}`"
+    :title="`欢迎回来 ${userInfo.nickname}`"
     :showButton="false"
     backgroundColor="var(--el-color-primary-light-9)"
     titleColor="var(--art-gray-900)"

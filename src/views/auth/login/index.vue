@@ -146,7 +146,7 @@
   export interface Account {
     // key: AccountKey
     label: string
-    userName: string
+    username: string
     password: string
     roles: string[]
   }
@@ -230,7 +230,7 @@
         loading.value = true
 
         const params = {
-          userName: formData.username,
+          username: formData.username,
           password: formData.password
         }
 
