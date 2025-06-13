@@ -306,7 +306,7 @@ export const asyncRoutes: MenuListType[] = [
       title: 'menus.system.title',
       icon: '&#xe7b9;',
       keepAlive: false,
-      roles: ['R_SUPER', 'R_ADMIN']
+      roles: ['R_SUPER', 'R_ADMIN', 'R_NORMAL']
     },
     children: [
       {
