@@ -83,7 +83,7 @@
     getTotalAmountData()
   })
 
-  function getFormattedDate(): string {
+  const getFormattedDate = () => {
     const today = new Date()
     const year = today.getFullYear()
     const month = (today.getMonth() + 1).toString().padStart(2, '0') // 月份是从 0 开始的，需要加 1

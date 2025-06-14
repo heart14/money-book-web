@@ -47,10 +47,10 @@
     </el-row> -->
 
     <el-row :gutter="20">
-      <el-col :md="24" :lg="8">
+      <!-- <el-col :md="24" :lg="8">
         <RecentTransaction />
-      </el-col>
-      <el-col :md="24" :lg="16" class="no-margin-bottom">
+      </el-col> -->
+      <el-col :md="24" :lg="24" class="no-margin-bottom">
         <HotProductsList />
       </el-col>
     </el-row>
@@ -65,7 +65,7 @@
   // import SalesClassification from './widget/SalesClassification.vue'
   // import TransactionList from './widget/TransactionList.vue'
   // import HotCommodity from './widget/HotCommodity.vue'
-  import RecentTransaction from './widget/RecentTransaction.vue'
+  // import RecentTransaction from './widget/RecentTransaction.vue'
   // import AnnualSales from './widget/AnnualSales.vue'
   // import ProductSales from './widget/ProductSales.vue'
   // import SalesGrowth from './widget/SalesGrowth.vue'
