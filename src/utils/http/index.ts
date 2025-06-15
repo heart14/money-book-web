@@ -2,6 +2,7 @@ import axios, { InternalAxiosRequestConfig, AxiosRequestConfig, AxiosResponse } 
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/store/modules/user'
 import EmojiText from '../emojo'
+import { ApiStatus } from './status'
 
 const axiosInstance = axios.create({
   timeout: 15000, // 请求超时时间(毫秒)
@@ -56,12 +57,22 @@ axiosInstance.interceptors.response.use(
     if (axios.isCancel(error)) {
       console.log('repeated request: ' + error.message)
     } else {
-      const errorMessage = error.response?.data.msg
-      ElMessage.error(
-        errorMessage
-          ? `${errorMessage} ${EmojiText[500]}`
-          : `请求超时或服务器异常！${EmojiText[500]}`
-      )
+      const status = error.response?.status
+      if (status === ApiStatus.Unauthorized) {
+        console.log('user Unauthorized: ' + error.message)
+        // 1. 清除用户 token
+        const userStore = useUserStore()
+        // 2. 显示过期提示
+        ElMessage.error(`登录状态已过期，请重新登录！ ${EmojiText[401] || '🔒'}`)
+        userStore.logOut()
+      } else {
+        const errorMessage = error.response?.data.msg
+        ElMessage.error(
+          errorMessage
+            ? `${errorMessage} ${EmojiText[500]}`
+            : `请求超时或服务器异常！${EmojiText[500]}`
+        )
+      }
     }
     return Promise.reject(error)
   }
