@@ -158,24 +158,28 @@
   },
   "analysis": {
     "todaySales": {
-      "title": "今日销售",
-      "subtitle": "销售总结",
+      "title": "统计数据",
+      "subtitle": "统计数据",
       "export": "导出",
       "cards": {
-        "totalSales": {
-          "label": "总销售额",
+        "totalExpense": {
+          "label": "总支出",
           "change": "+15%"
         },
-        "totalOrder": {
-          "label": "总订单",
+        "totalExpenseCount": {
+          "label": "支出笔数",
           "change": "+5%"
         },
-        "productSold": {
-          "label": "已售产品",
+        "totalIncome": {
+          "label": "总收入",
           "change": "+2%"
         },
-        "newCustomers": {
-          "label": "新客户",
+        "totalIncomeCount": {
+          "label": "收入笔数",
+          "change": "+8%"
+        },
+        "balance": {
+          "label": "结余",
           "change": "+8%"
         }
       },

@@ -10,7 +10,24 @@
     </div>
     <div class="sales-summary">
       <el-row :gutter="20">
-        <el-col :span="6" :xs="24" v-for="(item, index) in salesData" :key="index">
+        <el-col :span="4" :xs="24">
+          <div :class="['sales-card art-custom-card']">
+            <p>统计条件</p>
+            <el-switch
+              v-model="statisCondition"
+              size="large"
+              class="ml-2"
+              inline-prompt
+              style="--el-switch-on-color: #13ce66; --el-switch-off-color: #13ce66"
+              active-text="本月"
+              active-value="month"
+              inactive-text="本年"
+              inactive-value="year"
+              @change="changeCondition"
+            />
+          </div>
+        </el-col>
+        <el-col :span="4" :xs="24" v-for="(item, index) in salesData" :key="index">
           <div :class="['sales-card art-custom-card']">
             <i class="iconfont-sys" :class="item.class" v-html="item.iconfont"></i>
             <h2>
@@ -19,10 +36,11 @@
                 :endVal="item.value"
                 :duration="1000"
                 separator=""
+                :decimals="2"
               ></CountTo>
             </h2>
             <p>{{ item.label }}</p>
-            <small>{{ item.change }} {{ t('analysis.todaySales.fromYesterday') }}</small>
+            <small>{{ item.change }} {{ changeTitle }}</small>
           </div>
         </el-col>
       </el-row>
@@ -34,39 +52,79 @@
   import { ref } from 'vue'
   import { CountTo } from 'vue3-count-to'
   import { useI18n } from 'vue-i18n'
+  import { moneyBookService } from '@/api/moneyBookApi'
+  import { ApiStatus } from '@/utils/http/status'
 
   const { t } = useI18n()
 
+  const statisCondition = ref('')
+  const changeTitle = ref('')
+
+  const changeCondition = () => {
+    console.log('switch state: ' + statisCondition.value)
+    if (statisCondition.value == 'year') {
+      changeTitle.value = '较上年'
+    } else {
+      changeTitle.value = '较上月'
+    }
+    getStatisticData()
+  }
+
   const salesData = ref([
     {
-      label: t('analysis.todaySales.cards.totalSales.label'),
+      label: t('analysis.todaySales.cards.totalExpense.label'),
       value: 999,
-      change: t('analysis.todaySales.cards.totalSales.change'),
+      change: t('analysis.todaySales.cards.totalExpense.change'),
       iconfont: '&#xe7d9',
-      class: 'bg-primary'
+      class: 'bg-error'
     },
     {
-      label: t('analysis.todaySales.cards.totalOrder.label'),
+      label: t('analysis.todaySales.cards.totalExpenseCount.label'),
       value: 300,
-      change: t('analysis.todaySales.cards.totalOrder.change'),
+      change: t('analysis.todaySales.cards.totalExpenseCount.change'),
+      iconfont: '&#xe7d9',
+      class: 'bg-error'
+    },
+    {
+      label: t('analysis.todaySales.cards.totalIncome.label'),
+      value: 56,
+      change: t('analysis.todaySales.cards.totalIncome.change'),
       iconfont: '&#xe70f',
       class: 'bg-warning'
     },
     {
-      label: t('analysis.todaySales.cards.productSold.label'),
-      value: 56,
-      change: t('analysis.todaySales.cards.productSold.change'),
-      iconfont: '&#xe712',
-      class: 'bg-error'
+      label: t('analysis.todaySales.cards.totalIncomeCount.label'),
+      value: 68,
+      change: t('analysis.todaySales.cards.totalIncomeCount.change'),
+      iconfont: '&#xe70f',
+      class: 'bg-warning'
     },
     {
-      label: t('analysis.todaySales.cards.newCustomers.label'),
-      value: 68,
-      change: t('analysis.todaySales.cards.newCustomers.change'),
-      iconfont: '&#xe77f',
+      label: t('analysis.todaySales.cards.balance.label'),
+      value: 28,
+      change: t('analysis.todaySales.cards.balance.change'),
+      iconfont: '&#xe712',
       class: 'bg-success'
     }
   ])
+
+  const getStatisticData = async () => {
+    const params = {
+      conditionType: statisCondition.value
+    }
+
+    const res = await moneyBookService.getStatisticData(params)
+
+    console.log('statis data : ' + res.data)
+
+    if (res.code == ApiStatus.success) {
+      salesData.value = res.data
+    }
+  }
+
+  onMounted(() => {
+    getStatisticData()
+  })
 </script>
 
 <style lang="scss" scoped>

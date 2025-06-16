@@ -5,8 +5,12 @@ interface TotalAmountParam {
   date: string
 }
 
-interface BillList {
+interface BillListParam {
   date: string
+}
+
+interface StatisticDataParam {
+  conditionType: string // month | year
 }
 
 export class moneyBookService {
@@ -18,9 +22,16 @@ export class moneyBookService {
     })
   }
   // 查询今日支出与收入数据
-  static getBillList(params: BillList) {
+  static getBillList(params: BillListParam) {
     return request.get<BaseResult>({
       url: '/moneybook/getBillList',
+      params
+    })
+  }
+  // 查询年/月统计数据
+  static getStatisticData(params: StatisticDataParam) {
+    return request.get<BaseResult>({
+      url: '/moneybook/getStatisticData',
       params
     })
   }

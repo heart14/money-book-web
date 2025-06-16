@@ -1,12 +1,12 @@
 <template>
   <div class="analysis-dashboard">
     <el-row :gutter="20">
-      <el-col :xl="14" :lg="15" :xs="24">
+      <el-col :xl="14" :lg="24" :xs="24">
         <TodaySales />
       </el-col>
-      <el-col :xl="10" :lg="9" :xs="24">
+      <!-- <el-col :xl="10" :lg="9" :xs="24">
         <VisitorInsights />
-      </el-col>
+      </el-col> -->
     </el-row>
 
     <el-row :gutter="20" class="mt-20">
@@ -37,7 +37,7 @@
 
 <script setup lang="ts">
   import TodaySales from './widget/TodaySales.vue'
-  import VisitorInsights from './widget/VisitorInsights.vue'
+  // import VisitorInsights from './widget/VisitorInsights.vue'
   import TotalRevenue from './widget/TotalRevenue.vue'
   import CustomerSatisfaction from './widget/CustomerSatisfaction.vue'
   import TargetVsReality from './widget/TargetVsReality.vue'
