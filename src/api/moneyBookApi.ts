@@ -13,6 +13,11 @@ interface StatisticDataParam {
   conditionType: string // month | year
 }
 
+interface CategoryStatisticDataParam {
+  conditionType: string // month | year
+  billType: string // 支出 | 收入
+}
+
 export class moneyBookService {
   // 查询今日支出与收入数据
   static getTotalAmount(params: TotalAmountParam) {
@@ -32,6 +37,13 @@ export class moneyBookService {
   static getStatisticData(params: StatisticDataParam) {
     return request.get<BaseResult>({
       url: '/moneybook/getStatisticData',
+      params
+    })
+  }
+  // 查询年/月分类统计数据
+  static getCategoryStatisticData(params: CategoryStatisticDataParam) {
+    return request.get<BaseResult>({
+      url: '/moneybook/getCategoryStatistic',
       params
     })
   }

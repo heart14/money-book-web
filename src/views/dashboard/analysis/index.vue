@@ -22,15 +22,18 @@
     </el-row>
 
     <el-row :gutter="20" class="mt-20">
-      <el-col :xl="10" :lg="10" :xs="24">
-        <TopProducts />
+      <el-col :xl="12" :lg="12" :xs="24">
+        <CategoryExpenseStatis />
       </el-col>
-      <el-col :xl="7" :lg="7" :xs="24">
+      <el-col :xl="12" :lg="12" :xs="24">
+        <CategoryIncomeStatis />
+      </el-col>
+      <!-- <el-col :xl="8" :lg="8" :xs="24">
         <SalesMappingByCountry />
-      </el-col>
-      <el-col :xl="7" :lg="7" :xs="24">
+      </el-col> -->
+      <!-- <el-col :xl="7" :lg="7" :xs="24">
         <VolumeServiceLevel />
-      </el-col>
+      </el-col> -->
     </el-row>
   </div>
 </template>
@@ -41,9 +44,10 @@
   import TotalRevenue from './widget/TotalRevenue.vue'
   import CustomerSatisfaction from './widget/CustomerSatisfaction.vue'
   import TargetVsReality from './widget/TargetVsReality.vue'
-  import TopProducts from './widget/TopProducts.vue'
-  import SalesMappingByCountry from './widget/SalesMappingByCountry.vue'
-  import VolumeServiceLevel from './widget/VolumeServiceLevel.vue'
+  import CategoryExpenseStatis from './widget/CategoryExpenseStatis.vue'
+  import CategoryIncomeStatis from './widget/CategoryIncomeStatis.vue'
+  // import SalesMappingByCountry from './widget/SalesMappingByCountry.vue'
+  // import VolumeServiceLevel from './widget/VolumeServiceLevel.vue'
 </script>
 
 <style lang="scss" scoped>

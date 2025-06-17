@@ -1,11 +1,11 @@
 <template>
   <div class="custom-card art-custom-card top-products">
     <div class="custom-card-header">
-      <span class="title">{{ t('analysis.topProducts.title') }}</span>
+      <span class="title">分类收入统计</span>
     </div>
     <div class="custom-card-body">
       <art-table
-        :data="products"
+        :data="categoryData"
         style="width: 100%"
         :pagination="false"
         size="large"
@@ -13,8 +13,8 @@
         :stripe="false"
         :show-header-background="false"
       >
-        <el-table-column prop="name" :label="t('analysis.topProducts.columns.name')" width="200" />
-        <el-table-column prop="popularity" :label="t('analysis.topProducts.columns.popularity')">
+        <el-table-column prop="categoryName" label="分类名称" />
+        <!-- <el-table-column prop="popularity" :label="t('analysis.topProducts.columns.popularity')">
           <template #default="scope">
             <el-progress
               :percentage="scope.row.popularity"
@@ -23,19 +23,19 @@
               :show-text="false"
             />
           </template>
-        </el-table-column>
-        <el-table-column prop="sales" :label="t('analysis.topProducts.columns.sales')" width="80">
+        </el-table-column> -->
+        <el-table-column prop="totalAmount" label="金额">
           <template #default="scope">
             <span
               :style="{
-                color: getColor(scope.row.popularity),
-                backgroundColor: `rgba(${hexToRgb(getColor(scope.row.popularity))}, 0.08)`,
-                border: '1px solid',
+                color: getColor(scope.row.totalAmount),
+                backgroundColor: `rgba(${hexToRgb(getColor(scope.row.totalAmount))}, 0.08)`,
+                border: '0px solid',
                 padding: '3px 6px',
                 borderRadius: '4px',
                 fontSize: '12px'
               }"
-              >{{ scope.row.sales }}</span
+              >{{ scope.row.totalAmount }}</span
             >
           </template>
         </el-table-column>
@@ -46,12 +46,12 @@
 
 <script setup lang="ts">
   import { hexToRgb } from '@/utils/color'
-  import { computed } from 'vue'
   import { useI18n } from 'vue-i18n'
+  import { moneyBookService } from '@/api/moneyBookApi'
+  import { ApiStatus } from '@/utils/http/status'
   const { t } = useI18n()
 
-  // 使用 computed 来创建响应式的产品数据
-  const products = computed(() => [
+  const categoryData = ref([
     {
       name: t('analysis.topProducts.products.homeDecor.name'),
       popularity: 10,
@@ -83,6 +83,23 @@
       sales: t('analysis.topProducts.products.earbuds.sales')
     }
   ])
+
+  const getCategoryData = async () => {
+    const params = {
+      conditionType: 'year',
+      billType: '收入'
+    }
+
+    const res = await moneyBookService.getCategoryStatisticData(params)
+
+    if (res.code == ApiStatus.success) {
+      categoryData.value = res.data
+    }
+  }
+
+  onMounted(() => {
+    getCategoryData()
+  })
 
   const getColor = (percentage: number) => {
     if (percentage < 25) return '#00E096'
