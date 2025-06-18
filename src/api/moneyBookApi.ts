@@ -47,4 +47,12 @@ export class moneyBookService {
       params
     })
   }
+
+  // 查询年/月总收入支出数据
+  static getMonthlyData(params: StatisticDataParam) {
+    return request.get<BaseResult>({
+      url: '/moneybook/getMonthlyData',
+      params
+    })
+  }
 }

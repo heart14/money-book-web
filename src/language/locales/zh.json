@@ -204,6 +204,10 @@
       "legend": {
         "lastMonth": "上月",
         "thisMonth": "本月"
+      },
+      "trend": {
+        "expense": "支出",
+        "income": "收入"
       }
     },
     "targetVsReality": {

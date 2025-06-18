@@ -1,7 +1,7 @@
 <template>
   <div class="custom-card art-custom-card customer-satisfaction">
     <div class="custom-card-header">
-      <span class="title">{{ t('analysis.customerSatisfaction.title') }}</span>
+      <span class="title">收支趋势图</span>
     </div>
     <div class="custom-card-body">
       <div ref="chartRef" style="height: 300px; margin-top: 10px"></div>
@@ -13,9 +13,30 @@
   import * as echarts from 'echarts'
   import { useI18n } from 'vue-i18n'
   import { useChart } from '@/composables/useChart'
+  import { moneyBookService } from '@/api/moneyBookApi'
+  import { ApiStatus } from '@/utils/http/status'
   const { t } = useI18n()
 
   const { chartRef, isDark, initChart } = useChart()
+
+  const monthlyData = ref({
+    date: [],
+    totalIncome: [],
+    totalExpense: []
+  })
+
+  const getMonthlyData = async () => {
+    const params = {
+      conditionType: 'year'
+    }
+
+    const res = await moneyBookService.getMonthlyData(params)
+
+    if (res.code == ApiStatus.success) {
+      monthlyData.value = res.data
+      initChart(options())
+    }
+  }
 
   const options: () => echarts.EChartsOption = () => ({
     grid: {
@@ -31,8 +52,8 @@
     },
     legend: {
       data: [
-        t('analysis.customerSatisfaction.legend.lastMonth'),
-        t('analysis.customerSatisfaction.legend.thisMonth')
+        t('analysis.customerSatisfaction.trend.income'),
+        t('analysis.customerSatisfaction.trend.expense')
       ],
       bottom: 0,
       textStyle: {
@@ -43,7 +64,7 @@
     xAxis: {
       type: 'category',
       boundaryGap: false,
-      data: ['Week 0', 'Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'],
+      data: monthlyData.value.date,
       axisLine: { show: false },
       axisTick: { show: false },
       axisLabel: { show: false } // 隐藏 x 轴标签
@@ -52,17 +73,17 @@
       type: 'value',
       axisLine: { show: false },
       axisTick: { show: false },
-      axisLabel: { show: false },
+      axisLabel: { show: true },
       splitLine: {
         show: false // 将 show 设置为 false 以去除水平线条
       }
     },
     series: [
       {
-        name: t('analysis.customerSatisfaction.legend.lastMonth'),
+        name: t('analysis.customerSatisfaction.trend.income'),
         type: 'line',
         smooth: true,
-        data: [1800, 2800, 1800, 2300, 2600, 2500, 3000],
+        data: monthlyData.value.totalIncome,
         areaStyle: {
           opacity: 0.8,
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
@@ -80,10 +101,10 @@
         }
       },
       {
-        name: t('analysis.customerSatisfaction.legend.thisMonth'),
+        name: t('analysis.customerSatisfaction.trend.expense'),
         type: 'line',
         smooth: true,
-        data: [4000, 3500, 4300, 3700, 4500, 3500, 4000],
+        data: monthlyData.value.totalExpense,
         areaStyle: {
           opacity: 0.8,
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
@@ -108,6 +129,7 @@
   })
 
   onMounted(() => {
+    getMonthlyData()
     initChart(options())
   })
 </script>

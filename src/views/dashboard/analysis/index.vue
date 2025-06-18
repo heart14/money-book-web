@@ -10,15 +10,15 @@
     </el-row>
 
     <el-row :gutter="20" class="mt-20">
-      <el-col :xl="10" :lg="10" :xs="24">
+      <!-- <el-col :xl="10" :lg="10" :xs="24">
         <TotalRevenue />
-      </el-col>
-      <el-col :xl="7" :lg="7" :xs="24">
+      </el-col> -->
+      <el-col :xl="24" :lg="24" :xs="24">
         <CustomerSatisfaction />
       </el-col>
-      <el-col :xl="7" :lg="7" :xs="24">
+      <!-- <el-col :xl="7" :lg="7" :xs="24">
         <TargetVsReality />
-      </el-col>
+      </el-col> -->
     </el-row>
 
     <el-row :gutter="20" class="mt-20">
@@ -41,9 +41,9 @@
 <script setup lang="ts">
   import TodaySales from './widget/TodaySales.vue'
   // import VisitorInsights from './widget/VisitorInsights.vue'
-  import TotalRevenue from './widget/TotalRevenue.vue'
+  // import TotalRevenue from './widget/TotalRevenue.vue'
   import CustomerSatisfaction from './widget/CustomerSatisfaction.vue'
-  import TargetVsReality from './widget/TargetVsReality.vue'
+  // import TargetVsReality from './widget/TargetVsReality.vue'
   import CategoryExpenseStatis from './widget/CategoryExpenseStatis.vue'
   import CategoryIncomeStatis from './widget/CategoryIncomeStatis.vue'
   // import SalesMappingByCountry from './widget/SalesMappingByCountry.vue'
