@@ -15,6 +15,7 @@
   import { useChart } from '@/composables/useChart'
   import { moneyBookService } from '@/api/moneyBookApi'
   import { ApiStatus } from '@/utils/http/status'
+  import { defineProps } from 'vue'
   const { t } = useI18n()
 
   const { chartRef, isDark, initChart } = useChart()
@@ -27,7 +28,7 @@
 
   const getMonthlyData = async () => {
     const params = {
-      conditionType: 'year'
+      conditionType: props.statisCondition
     }
 
     const res = await moneyBookService.getMonthlyData(params)
@@ -132,6 +133,23 @@
     getMonthlyData()
     initChart(options())
   })
+
+  const props = defineProps({
+    statisCondition: {
+      type: String,
+      default: null
+    }
+  })
+
+  watch(
+    () => props.statisCondition,
+    (newVal) => {
+      console.log('收到新值:', newVal)
+      // 这里可以加载数据
+      getMonthlyData()
+    },
+    { immediate: true }
+  )
 </script>
 <style lang="scss" scoped>
   .custom-card {

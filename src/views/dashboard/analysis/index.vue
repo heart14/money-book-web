@@ -14,7 +14,7 @@
         <TotalRevenue />
       </el-col> -->
       <el-col :xl="24" :lg="24" :xs="24">
-        <CustomerSatisfaction />
+        <CustomerSatisfaction :statisCondition="statisCondition" />
       </el-col>
       <!-- <el-col :xl="7" :lg="7" :xs="24">
         <TargetVsReality />
@@ -23,10 +23,10 @@
 
     <el-row :gutter="20" class="mt-20">
       <el-col :xl="12" :lg="12" :xs="24">
-        <CategoryExpenseStatis :statisCondition="statisCondition" />
+        <CategoryIncomeStatis :statisCondition="statisCondition" />
       </el-col>
       <el-col :xl="12" :lg="12" :xs="24">
-        <CategoryIncomeStatis :statisCondition="statisCondition" />
+        <CategoryExpenseStatis :statisCondition="statisCondition" />
       </el-col>
       <!-- <el-col :xl="8" :lg="8" :xs="24">
         <SalesMappingByCountry />
