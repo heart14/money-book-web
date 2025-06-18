@@ -23,10 +23,10 @@
 
     <el-row :gutter="20" class="mt-20">
       <el-col :xl="12" :lg="12" :xs="24">
-        <CategoryExpenseStatis />
+        <CategoryExpenseStatis :statisCondition="statisCondition" />
       </el-col>
       <el-col :xl="12" :lg="12" :xs="24">
-        <CategoryIncomeStatis />
+        <CategoryIncomeStatis :statisCondition="statisCondition" />
       </el-col>
       <!-- <el-col :xl="8" :lg="8" :xs="24">
         <SalesMappingByCountry />

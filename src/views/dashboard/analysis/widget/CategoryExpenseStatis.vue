@@ -49,6 +49,7 @@
   import { useI18n } from 'vue-i18n'
   import { moneyBookService } from '@/api/moneyBookApi'
   import { ApiStatus } from '@/utils/http/status'
+  import { defineProps } from 'vue'
   const { t } = useI18n()
 
   const categoryData = ref([
@@ -86,7 +87,7 @@
 
   const getCategoryData = async () => {
     const params = {
-      conditionType: 'year',
+      conditionType: props.statisCondition,
       billType: '支出'
     }
 
@@ -107,6 +108,23 @@
     if (percentage < 75) return '#884CFF'
     return '#FE8F0E'
   }
+
+  const props = defineProps({
+    statisCondition: {
+      type: String,
+      default: null
+    }
+  })
+
+  watch(
+    () => props.statisCondition,
+    (newVal) => {
+      console.log('收到新值:', newVal)
+      // 这里可以加载数据
+      getCategoryData()
+    },
+    { immediate: true }
+  )
 </script>
 
 <style lang="scss" scoped>
