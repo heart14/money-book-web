@@ -2,7 +2,7 @@
   <div class="analysis-dashboard">
     <el-row :gutter="20">
       <el-col :xl="14" :lg="24" :xs="24">
-        <TodaySales />
+        <TodaySales @update:statisCondition="handleStatisConditionChange" />
       </el-col>
       <!-- <el-col :xl="10" :lg="9" :xs="24">
         <VisitorInsights />
@@ -48,6 +48,13 @@
   import CategoryIncomeStatis from './widget/CategoryIncomeStatis.vue'
   // import SalesMappingByCountry from './widget/SalesMappingByCountry.vue'
   // import VolumeServiceLevel from './widget/VolumeServiceLevel.vue'
+
+  const statisCondition = ref<string>()
+
+  const handleStatisConditionChange = (value: string) => {
+    console.log('子组件emit new val: ' + value)
+    statisCondition.value = value
+  }
 </script>
 
 <style lang="scss" scoped>

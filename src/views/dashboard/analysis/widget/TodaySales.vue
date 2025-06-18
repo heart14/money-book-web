@@ -49,11 +49,14 @@
 </template>
 
 <script setup lang="ts">
-  import { ref } from 'vue'
+  import { ref, defineEmits } from 'vue'
   import { CountTo } from 'vue3-count-to'
   import { useI18n } from 'vue-i18n'
   import { moneyBookService } from '@/api/moneyBookApi'
   import { ApiStatus } from '@/utils/http/status'
+  const emit = defineEmits<{
+    (e: 'update:statisCondition', value: string): void
+  }>()
 
   const { t } = useI18n()
 
@@ -68,6 +71,7 @@
       changeTitle.value = '较上月'
     }
     getStatisticData()
+    emit('update:statisCondition', statisCondition.value)
   }
 
   const salesData = ref([
