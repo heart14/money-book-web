@@ -33,7 +33,7 @@
                 <span class="price">¥{{ scope.row.amount.toLocaleString() }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="分类" prop="category" />
+            <el-table-column label="分类" prop="categoryName" />
             <!-- <el-table-column label="库存" prop="stock">
               <template #default="scope">
                 <div class="stock-badge" :class="getStockClass(scope.row.stock)">
@@ -166,6 +166,7 @@
     amount: string
     type: string
     category: string
+    categoryName: string
     remark: string
     recordTime: string
     percentage: number

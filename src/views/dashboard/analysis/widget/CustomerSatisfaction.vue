@@ -68,7 +68,7 @@
       data: monthlyData.value.date,
       axisLine: { show: false },
       axisTick: { show: false },
-      axisLabel: { show: false } // 隐藏 x 轴标签
+      axisLabel: { show: true } // 隐藏 x 轴标签
     },
     yAxis: {
       type: 'value',
@@ -76,7 +76,7 @@
       axisTick: { show: false },
       axisLabel: { show: true },
       splitLine: {
-        show: false // 将 show 设置为 false 以去除水平线条
+        show: true // 将 show 设置为 false 以去除水平线条
       }
     },
     series: [
