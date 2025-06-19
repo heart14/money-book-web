@@ -289,7 +289,8 @@
       "title": "仪表盘",
       "console": "工作台",
       "analysis": "分析页",
-      "ecommerce": "电子商务"
+      "ecommerce": "电子商务",
+      "detail": "收支详情"
     },
     "widgets": {
       "title": "组件中心",
