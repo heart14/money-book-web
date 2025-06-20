@@ -1,6 +1,18 @@
 import request from '@/utils/http'
 import { BaseResult } from '@/types/axios'
 
+interface PageListParam {
+  current: number
+  size: number
+  date: string
+  title: string
+  categoryId: number
+  type: string
+  dateRangeStart: string
+  dateRangeEnd: string
+  remark: string
+}
+
 interface TotalAmountParam {
   date: string
 }
@@ -19,6 +31,13 @@ interface CategoryStatisticDataParam {
 }
 
 export class moneyBookService {
+  // 分页查询详细收支列表数据
+  static getPageList(params: PageListParam) {
+    return request.get<BaseResult>({
+      url: '/moneybook/getPageList',
+      params
+    })
+  }
   // 查询今日支出与收入数据
   static getTotalAmount(params: TotalAmountParam) {
     return request.get<BaseResult>({
