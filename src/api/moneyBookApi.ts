@@ -10,7 +10,7 @@ interface PageListParam {
   type: string
   dateRangeStart: string
   dateRangeEnd: string
-  remark: string
+  path: string
 }
 
 interface TotalAmountParam {
@@ -28,6 +28,16 @@ interface StatisticDataParam {
 interface CategoryStatisticDataParam {
   conditionType: string // month | year
   billType: string // 支出 | 收入
+}
+
+interface saveOrEditParam {
+  id: string
+  datetime: string
+  title: string
+  amount: string
+  type: string
+  categoryId: number
+  remark: string
 }
 
 export class moneyBookService {
@@ -71,6 +81,22 @@ export class moneyBookService {
   static getMonthlyData(params: StatisticDataParam) {
     return request.get<BaseResult>({
       url: '/moneybook/getMonthlyData',
+      params
+    })
+  }
+
+  // 保存记账记录
+  static save(params: saveOrEditParam) {
+    return request.post<BaseResult>({
+      url: '/moneybook/save',
+      params
+    })
+  }
+
+  // 更新记账记录
+  static edit(params: saveOrEditParam) {
+    return request.post<BaseResult>({
+      url: '/moneybook/edit',
       params
     })
   }
