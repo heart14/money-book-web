@@ -103,9 +103,9 @@
   })
 
   const getColor = (percentage: number) => {
-    if (percentage < 25) return '#00E096'
-    if (percentage < 50) return '#0095FF'
-    if (percentage < 75) return '#884CFF'
+    if (percentage < 100) return '#00E096'
+    if (percentage < 1000) return '#0095FF'
+    if (percentage < 10000) return '#884CFF'
     return '#FE8F0E'
   }
 
