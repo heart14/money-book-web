@@ -1,7 +1,7 @@
 <template>
   <div class="analysis-dashboard">
     <el-row :gutter="20">
-      <el-col :xl="14" :lg="24" :xs="24">
+      <el-col :xl="24" :lg="24" :xs="24">
         <TodaySales @update:statisCondition="handleStatisConditionChange" />
       </el-col>
       <!-- <el-col :xl="10" :lg="9" :xs="24">
