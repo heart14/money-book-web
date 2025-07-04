@@ -16,6 +16,11 @@
   import { moneyBookService } from '@/api/moneyBookApi'
   import { ApiStatus } from '@/utils/http/status'
   import { defineProps } from 'vue'
+  import { useSettingStore } from '@/store/modules/setting'
+
+  const settingStore = useSettingStore()
+  const { systemThemeColor } = storeToRefs(settingStore)
+
   const { t } = useI18n()
 
   const { chartRef, isDark, initChart } = useChart()
@@ -41,15 +46,17 @@
 
   const options: () => echarts.EChartsOption = () => ({
     grid: {
-      top: 30,
-      right: 20,
-      bottom: 50,
-      left: 20,
+      top: 20,
+      right: 3,
+      bottom: 40,
+      left: 3,
       containLabel: true
     },
     tooltip: {
       trigger: 'axis',
-      confine: true
+      axisPointer: {
+        type: 'shadow'
+      }
     },
     legend: {
       data: [
@@ -57,6 +64,10 @@
         t('analysis.customerSatisfaction.trend.expense')
       ],
       bottom: 0,
+      icon: 'cicle',
+      itemWidth: 10,
+      itemHeight: 10,
+      itemGap: 15,
       textStyle: {
         fontSize: 12,
         color: isDark.value ? '#808290' : '#222B45'
@@ -64,63 +75,54 @@
     },
     xAxis: {
       type: 'category',
-      boundaryGap: false,
+      boundaryGap: true,
       data: monthlyData.value.date,
       axisLine: { show: false },
       axisTick: { show: false },
-      axisLabel: { show: true } // 隐藏 x 轴标签
+      axisLabel: {
+        // show: true, // 隐藏 x 轴标签
+        color: isDark.value ? '#808290' : '#222B45'
+      }
     },
     yAxis: {
       type: 'value',
       axisLine: { show: false },
       axisTick: { show: false },
-      axisLabel: { show: true },
+      axisLabel: { color: isDark.value ? '#808290' : '#222B45' },
       splitLine: {
-        show: true // 将 show 设置为 false 以去除水平线条
+        show: true, // 将 show 设置为 false 以去除水平线条
+        lineStyle: {
+          color: isDark.value ? 'rgba(255, 255, 255, 0.1)' : '#EFF1F3',
+          width: 0.8
+        }
       }
     },
     series: [
       {
         name: t('analysis.customerSatisfaction.trend.income'),
-        type: 'line',
-        smooth: true,
+        type: 'bar',
         data: monthlyData.value.totalIncome,
-        areaStyle: {
-          opacity: 0.8,
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: 'rgba(0,157,255,0.33)' },
-            { offset: 1, color: 'rgba(255,255,255,0)' }
-          ])
-        },
-        lineStyle: {
-          width: 2,
-          color: '#0086E1'
-        },
-        symbol: 'none',
+        barWidth: '25%',
         itemStyle: {
+          borderRadius: 4,
           color: '#0095FF'
-        }
+        },
+        animationDelay: (idx) => idx * 50 + 300,
+        animationDuration: (idx) => 1500 - idx * 50,
+        animationEasing: 'quadraticOut'
       },
       {
         name: t('analysis.customerSatisfaction.trend.expense'),
-        type: 'line',
-        smooth: true,
+        type: 'bar',
         data: monthlyData.value.totalExpense,
-        areaStyle: {
-          opacity: 0.8,
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: 'rgba(147,241,180,0.33)' },
-            { offset: 1, color: 'rgba(255,255,255,0)' }
-          ])
-        },
-        lineStyle: {
-          width: 2,
-          color: '#14DEB9'
-        },
-        symbol: 'none',
+        barWidth: '25%',
         itemStyle: {
-          color: '#14DEB9'
-        }
+          borderRadius: 4,
+          color: systemThemeColor.value
+        },
+        animationDelay: (idx) => idx * 50 + 300,
+        animationDuration: (idx) => 1500 - idx * 50,
+        animationEasing: 'quadraticOut'
       }
     ]
   })
@@ -131,7 +133,7 @@
 
   onMounted(() => {
     getMonthlyData()
-    initChart(options())
+    // initChart(options())
   })
 
   const props = defineProps({
@@ -153,10 +155,19 @@
 </script>
 <style lang="scss" scoped>
   .custom-card {
-    height: 400px;
+    // height: 400px;
+    box-sizing: border-box;
+    width: 100%;
+    height: 420px;
+    padding: 16px;
 
     &-body {
-      padding: 10px 0;
+      // padding: 10px 0;
+      box-sizing: border-box;
+      width: 100%;
+      height: 220px;
+      padding: 20px 0 20px 20px;
+      border-radius: calc(var(--custom-radius) / 2 + 4px) !important;
     }
   }
 
