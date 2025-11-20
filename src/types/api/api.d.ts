@@ -76,10 +76,11 @@ declare namespace Api {
 
     /** 用户信息 */
     interface UserInfo {
+      uid: number
       buttons: string[]
       roles: string[]
-      userId: number
-      userName: string
+      username: string
+      nickname: string
       email: string
       avatar?: string
     }
