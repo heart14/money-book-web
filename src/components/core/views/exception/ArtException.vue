@@ -1,91 +1,43 @@
 <template>
-  <div class="page-content state-page">
-    <div class="tips">
-      <img :src="data.imgUrl" />
-      <div class="right-wrap">
-        <p>{{ data.desc }}</p>
-        <el-button color="#47A7FF" @click="backHome" v-ripple>{{ data.btnText }}</el-button>
+  <div class="page-content !border-0 !bg-transparent min-h-screen flex-cc">
+    <div class="flex-cc max-md:!block max-md:text-center">
+      <ThemeSvg :src="data.imgUrl" size="100%" class="!w-100" />
+      <div class="ml-15 w-75 max-md:mx-auto max-md:mt-10 max-md:w-full max-md:text-center">
+        <p class="text-xl leading-7 text-g-600 max-md:text-lg">{{ data.desc }}</p>
+        <ElButton type="primary" size="large" @click="backHome" v-ripple class="mt-5">{{
+          data.btnText
+        }}</ElButton>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { HOME_PAGE } from '@/router/routesAlias'
+  import { useCommon } from '@/hooks/core/useCommon'
+
   const router = useRouter()
 
-  defineProps({
-    data: {
-      type: Object as PropType<{
-        title: string
-        desc: string
-        btnText: string
-        imgUrl: string
-      }>,
-      required: true
-    }
-  })
+  interface ExceptionData {
+    /** 标题 */
+    title: string
+    /** 描述 */
+    desc: string
+    /** 按钮文本 */
+    btnText: string
+    /** 图片地址 */
+    imgUrl: string
+  }
+
+  withDefaults(
+    defineProps<{
+      data: ExceptionData
+    }>(),
+    {}
+  )
+
+  const { homePath } = useCommon()
 
   const backHome = () => {
-    router.push(HOME_PAGE)
+    router.push(homePath.value)
   }
 </script>
-
-<style lang="scss" scoped>
-  .state-page {
-    display: flex;
-    background-color: transparent !important;
-    border: 0 !important;
-
-    .tips {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding-bottom: 5vh;
-      margin: auto;
-
-      img {
-        width: 300px;
-      }
-
-      .right-wrap {
-        width: 300px;
-        margin-left: 100px;
-
-        p {
-          font-size: 20px;
-          line-height: 28px;
-          color: var(--art-gray-600);
-        }
-
-        .el-button {
-          margin-top: 20px;
-        }
-      }
-    }
-  }
-
-  @media only screen and (max-width: $device-ipad-vertical) {
-    .state-page {
-      .tips {
-        display: block;
-        text-align: center;
-
-        img {
-          width: 200px;
-        }
-
-        .right-wrap {
-          width: 100%;
-          margin: auto;
-          text-align: center;
-
-          p {
-            margin-top: 40px;
-            font-size: 18px;
-          }
-        }
-      }
-    }
-  }
-</style>

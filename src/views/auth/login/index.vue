@@ -1,124 +1,106 @@
+<!-- 登录页面 -->
 <template>
-  <div class="login">
-    <div class="left-wrap">
-      <LoginLeftView></LoginLeftView>
-    </div>
-    <div class="right-wrap">
-      <div class="top-right-wrap">
-        <div class="btn theme-btn" @click="toggleTheme">
-          <i class="iconfont-sys">
-            {{ isDark ? '&#xe6b5;' : '&#xe725;' }}
-          </i>
-        </div>
-        <el-dropdown @command="changeLanguage" popper-class="langDropDownStyle">
-          <div class="btn language-btn">
-            <i class="iconfont-sys icon-language">&#xe611;</i>
-          </div>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <div v-for="lang in languageOptions" :key="lang.value" class="lang-btn-item">
-                <el-dropdown-item
-                  :command="lang.value"
-                  :class="{ 'is-selected': locale === lang.value }"
-                >
-                  <span class="menu-txt">{{ lang.label }}</span>
-                  <i v-if="locale === lang.value" class="iconfont-sys icon-check">&#xe621;</i>
-                </el-dropdown-item>
-              </div>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
-      </div>
-      <div class="header">
-        <ArtLogo class="icon" />
-        <h1>{{ systemName }}</h1>
-      </div>
-      <div class="login-wrap">
+  <div class="flex w-full h-screen">
+    <LoginLeftView />
+
+    <div class="relative flex-1">
+      <AuthTopBar />
+
+      <div class="auth-right-wrap">
         <div class="form">
           <h3 class="title">{{ $t('login.title') }}</h3>
           <p class="sub-title">{{ $t('login.subTitle') }}</p>
-          <el-form
+          <ElForm
             ref="formRef"
             :model="formData"
             :rules="rules"
+            :key="formKey"
             @keyup.enter="handleSubmit"
             style="margin-top: 25px"
           >
-            <!-- <el-form-item prop="account">
-              <el-select v-model="formData.account" @change="setupAccount" class="account-select">
-                <el-option
+            <ElFormItem prop="account">
+              <ElSelect v-model="formData.account" @change="setupAccount">
+                <ElOption
                   v-for="account in accounts"
                   :key="account.key"
                   :label="account.label"
                   :value="account.key"
                 >
                   <span>{{ account.label }}</span>
-                </el-option>
-              </el-select>
-            </el-form-item> -->
-            <el-form-item prop="username">
-              <el-input
-                :placeholder="$t('login.placeholder[0]')"
+                </ElOption>
+              </ElSelect>
+            </ElFormItem>
+            <ElFormItem prop="username">
+              <ElInput
+                class="custom-height"
+                :placeholder="$t('login.placeholder.username')"
                 v-model.trim="formData.username"
               />
-            </el-form-item>
-            <el-form-item prop="password">
-              <el-input
-                :placeholder="$t('login.placeholder[1]')"
+            </ElFormItem>
+            <ElFormItem prop="password">
+              <ElInput
+                class="custom-height"
+                :placeholder="$t('login.placeholder.password')"
                 v-model.trim="formData.password"
                 type="password"
-                radius="8px"
                 autocomplete="off"
+                show-password
               />
-            </el-form-item>
-            <div class="drag-verify">
-              <div class="drag-verify-content" :class="{ error: !isPassing && isClickPass }">
+            </ElFormItem>
+
+            <!-- 推拽验证 -->
+            <div class="relative pb-5 mt-6">
+              <div
+                class="relative z-[2] overflow-hidden select-none rounded-lg border border-transparent tad-300"
+                :class="{ '!border-[#FF4E4F]': !isPassing && isClickPass }"
+              >
                 <ArtDragVerify
                   ref="dragVerify"
                   v-model:value="isPassing"
-                  :width="width < 500 ? 328 : 438"
                   :text="$t('login.sliderText')"
-                  textColor="var(--art-gray-800)"
+                  textColor="var(--art-gray-700)"
                   :successText="$t('login.sliderSuccessText')"
-                  :progressBarBg="getCssVariable('--el-color-primary')"
-                  background="var(--art-gray-200)"
-                  handlerBg="var(--art-main-bg-color)"
-                  @pass="onPass"
+                  :progressBarBg="getCssVar('--el-color-primary')"
+                  :background="isDark ? '#26272F' : '#F1F1F4'"
+                  handlerBg="var(--default-box-color)"
                 />
               </div>
-              <p class="error-text" :class="{ 'show-error-text': !isPassing && isClickPass }">{{
-                $t('login.placeholder[2]')
-              }}</p>
+              <p
+                class="absolute top-0 z-[1] px-px mt-2 text-xs text-[#f56c6c] tad-300"
+                :class="{ 'translate-y-10': !isPassing && isClickPass }"
+              >
+                {{ $t('login.placeholder.slider') }}
+              </p>
             </div>
 
-            <div class="forget-password">
-              <el-checkbox v-model="formData.rememberPassword">{{
+            <div class="flex-cb mt-2 text-sm">
+              <ElCheckbox v-model="formData.rememberPassword">{{
                 $t('login.rememberPwd')
-              }}</el-checkbox>
-              <router-link :to="RoutesAlias.ForgetPassword">{{
+              }}</ElCheckbox>
+              <RouterLink class="text-theme" :to="{ name: 'ForgetPassword' }">{{
                 $t('login.forgetPwd')
-              }}</router-link>
+              }}</RouterLink>
             </div>
 
             <div style="margin-top: 30px">
-              <el-button
-                class="login-btn"
+              <ElButton
+                class="w-full custom-height"
                 type="primary"
                 @click="handleSubmit"
                 :loading="loading"
                 v-ripple
               >
                 {{ $t('login.btnText') }}
-              </el-button>
+              </ElButton>
             </div>
 
-            <div class="footer">
-              <p>
-                {{ $t('login.noAccount') }}
-                <router-link :to="RoutesAlias.Register">{{ $t('login.register') }}</router-link>
-              </p>
+            <div class="mt-5 text-sm text-gray-600">
+              <span>{{ $t('login.noAccount') }}</span>
+              <RouterLink class="text-theme" :to="{ name: 'Register' }">{{
+                $t('login.register')
+              }}</RouterLink>
             </div>
-          </el-form>
+          </ElForm>
         </div>
       </div>
     </div>
@@ -127,61 +109,65 @@
 
 <script setup lang="ts">
   import AppConfig from '@/config'
-  import { RoutesAlias } from '@/router/routesAlias'
-  import { ElMessage, ElNotification } from 'element-plus'
   import { useUserStore } from '@/store/modules/user'
-  import { HOME_PAGE } from '@/router/routesAlias'
-  import { ApiStatus } from '@/utils/http/status'
-  import { getCssVariable } from '@/utils/colors'
-  import { languageOptions } from '@/language'
-  import { LanguageEnum, SystemThemeEnum } from '@/enums/appEnum'
+  import { getCssVar } from '@/utils/ui'
   import { useI18n } from 'vue-i18n'
-
-  const { t } = useI18n()
+  import { HttpError } from '@/utils/http/error'
+  import { fetchLogin } from '@/api/auth'
+  import { ElNotification, type FormInstance, type FormRules } from 'element-plus'
   import { useSettingStore } from '@/store/modules/setting'
-  import type { FormInstance, FormRules } from 'element-plus'
 
-  // type AccountKey = 'super' | 'admin' | 'user'
+  defineOptions({ name: 'Login' })
+
+  const settingStore = useSettingStore()
+  const { isDark } = storeToRefs(settingStore)
+  const { t, locale } = useI18n()
+  const formKey = ref(0)
+
+  // 监听语言切换，重置表单
+  watch(locale, () => {
+    formKey.value++
+  })
+
+  type AccountKey = 'super' | 'admin' | 'user'
 
   export interface Account {
-    // key: AccountKey
+    key: AccountKey
     label: string
-    username: string
+    userName: string
     password: string
     roles: string[]
   }
 
-  // const accounts = computed<Account[]>(() => [
-  //   {
-  //     key: 'super',
-  //     label: t('login.roles.super'),
-  //     userName: 'Super',
-  //     password: '123456',
-  //     roles: ['R_SUPER']
-  //   },
-  //   {
-  //     key: 'admin',
-  //     label: t('login.roles.admin'),
-  //     userName: 'Admin',
-  //     password: '123456',
-  //     roles: ['R_ADMIN']
-  //   },
-  //   {
-  //     key: 'user',
-  //     label: t('login.roles.user'),
-  //     userName: 'User',
-  //     password: '123456',
-  //     roles: ['R_USER']
-  //   }
-  // ])
-
-  const settingStore = useSettingStore()
-  const { isDark, systemThemeType } = storeToRefs(settingStore)
+  const accounts = computed<Account[]>(() => [
+    {
+      key: 'super',
+      label: t('login.roles.super'),
+      userName: 'Super',
+      password: '123456',
+      roles: ['R_SUPER']
+    },
+    {
+      key: 'admin',
+      label: t('login.roles.admin'),
+      userName: 'Admin',
+      password: '123456',
+      roles: ['R_ADMIN']
+    },
+    {
+      key: 'user',
+      label: t('login.roles.user'),
+      userName: 'User',
+      password: '123456',
+      roles: ['R_USER']
+    }
+  ])
 
   const dragVerify = ref()
 
   const userStore = useUserStore()
   const router = useRouter()
+  const route = useRoute()
   const isPassing = ref(false)
   const isClickPass = ref(false)
 
@@ -196,78 +182,77 @@
   })
 
   const rules = computed<FormRules>(() => ({
-    username: [{ required: true, message: t('login.placeholder[0]'), trigger: 'blur' }],
-    password: [{ required: true, message: t('login.placeholder[1]'), trigger: 'blur' }]
+    username: [{ required: true, message: t('login.placeholder.username'), trigger: 'blur' }],
+    password: [{ required: true, message: t('login.placeholder.password'), trigger: 'blur' }]
   }))
 
   const loading = ref(false)
-  const { width } = useWindowSize()
 
-  // onMounted(() => {
-  //   setupAccount('super')
-  // })
+  onMounted(() => {
+    setupAccount('super')
+  })
 
-  // // 设置账号
-  // const setupAccount = (key: AccountKey) => {
-  //   const selectedAccount = accounts.value.find((account: Account) => account.key === key)
-  //   formData.account = key
-  //   formData.username = selectedAccount?.userName ?? ''
-  //   formData.password = selectedAccount?.password ?? ''
-  // }
+  // 设置账号
+  const setupAccount = (key: AccountKey) => {
+    const selectedAccount = accounts.value.find((account: Account) => account.key === key)
+    formData.account = key
+    formData.username = selectedAccount?.userName ?? ''
+    formData.password = selectedAccount?.password ?? ''
+  }
 
-  const onPass = () => {}
-
+  // 登录
   const handleSubmit = async () => {
     if (!formRef.value) return
 
-    await formRef.value.validate(async (valid) => {
-      if (valid) {
-        if (!isPassing.value) {
-          isClickPass.value = true
-          return
-        }
+    try {
+      // 表单验证
+      const valid = await formRef.value.validate()
+      if (!valid) return
 
-        loading.value = true
-
-        const params = {
-          username: formData.username,
-          password: formData.password
-        }
-
-        try {
-          const res = await UserService.login(params)
-
-          if (res.code === ApiStatus.success) {
-            const { token, refreshToken } = res.data
-
-            if (token) {
-              userStore.setToken(token, refreshToken)
-              const res = await UserService.getUserInfo()
-
-              // 设置登录状态
-              userStore.setLoginStatus(true)
-              // 登录成功提示
-              showLoginSuccessNotice()
-
-              if (res.code === ApiStatus.success) {
-                userStore.setUserInfo(res.data)
-                userStore.setLoginStatus(true)
-                router.push(HOME_PAGE)
-              } else {
-                ElMessage.error(res.msg)
-              }
-            }
-          } else {
-            ElMessage.error(t('login.fail.title') + ' ' + res.msg)
-            loading.value = false
-            resetDragVerify()
-          }
-        } finally {
-          loading.value = false
-          resetDragVerify()
-        }
+      // 拖拽验证
+      if (!isPassing.value) {
+        isClickPass.value = true
+        return
       }
-    })
+
+      loading.value = true
+
+      // 登录请求
+      const { username, password } = formData
+
+      const { token, refreshToken } = await fetchLogin({
+        userName: username,
+        password
+      })
+
+      // 验证token
+      if (!token) {
+        throw new Error('Login failed - no token received')
+      }
+
+      // 存储 token 和登录状态
+      userStore.setToken(token, refreshToken)
+      userStore.setLoginStatus(true)
+
+      // 登录成功处理
+      showLoginSuccessNotice()
+
+      // 获取 redirect 参数，如果存在则跳转到指定页面，否则跳转到首页
+      const redirect = route.query.redirect as string
+      router.push(redirect || '/')
+    } catch (error) {
+      // 处理 HttpError
+      if (error instanceof HttpError) {
+        // console.log(error.code)
+      } else {
+        // 处理非 HttpError
+        // ElMessage.error('登录失败，请稍后重试')
+        console.error('[Login] Unexpected error:', error)
+      }
+    } finally {
+      loading.value = false
+      resetDragVerify()
+    }
   }
 
   // 重置拖拽验证
@@ -285,28 +270,16 @@
         zIndex: 10000,
         message: `${t('login.success.message')}, ${systemName}!`
       })
-    }, 150)
-  }
-
-  // 切换语言
-  const { locale } = useI18n()
-
-  const changeLanguage = (lang: LanguageEnum) => {
-    if (locale.value === lang) return
-    locale.value = lang
-    userStore.setLanguage(lang)
-  }
-
-  // 切换主题
-  import { useTheme } from '@/composables/useTheme'
-  import { UserService } from '@/api/usersApi'
-
-  const toggleTheme = () => {
-    let { LIGHT, DARK } = SystemThemeEnum
-    useTheme().switchThemeStyles(systemThemeType.value === LIGHT ? DARK : LIGHT)
+    }, 1000)
   }
 </script>
 
+<style scoped>
+  @import './style.css';
+</style>
+
 <style lang="scss" scoped>
-  @use './index';
+  :deep(.el-select__wrapper) {
+    height: 40px !important;
+  }
 </style>

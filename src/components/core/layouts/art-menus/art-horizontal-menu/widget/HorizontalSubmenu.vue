@@ -1,50 +1,58 @@
 <template>
-  <el-sub-menu v-if="hasChildren" :index="item.path || item.meta.title">
+  <ElSubMenu v-if="hasChildren" :index="item.path || item.meta.title" class="!p-0">
     <template #title>
-      <i
-        class="menu-icon iconfont-sys"
-        :style="{ color: theme?.iconColor }"
-        v-html="item.meta.icon"
-      ></i>
-      <span>{{ formatMenuTitle(item.meta.title) }}</span>
+      <ArtSvgIcon :icon="item.meta.icon" :color="theme?.iconColor" class="mr-1 text-lg" />
+      <span class="text-md">{{ formatMenuTitle(item.meta.title) }}</span>
+      <div v-if="item.meta.showBadge" class="art-badge art-badge-horizontal" />
+      <div v-if="item.meta.showTextBadge" class="art-text-badge">
+        {{ item.meta.showTextBadge }}
+      </div>
     </template>
 
     <!-- 递归调用自身处理子菜单 -->
     <HorizontalSubmenu
       v-for="child in filteredChildren"
-      :key="child.id"
+      :key="child.path"
       :item="child"
       :theme="theme"
       :is-mobile="isMobile"
       :level="level + 1"
       @close="closeMenu"
     />
-  </el-sub-menu>
+  </ElSubMenu>
 
-  <el-menu-item
+  <ElMenuItem
     v-else-if="!item.meta.isHide"
     :index="item.path || item.meta.title"
     @click="goPage(item)"
   >
-    <i
-      class="menu-icon iconfont-sys"
-      :style="{ color: theme?.iconColor }"
-      v-html="item.meta.icon"
-    ></i>
-    <span>{{ formatMenuTitle(item.meta.title) }}</span>
-    <div class="badge" v-if="item.meta.showBadge"></div>
-  </el-menu-item>
+    <ArtSvgIcon
+      :icon="item.meta.icon"
+      :color="theme?.iconColor"
+      class="mr-1 text-lg"
+      :style="{ color: theme.iconColor }"
+    />
+    <span class="text-md">{{ formatMenuTitle(item.meta.title) }}</span>
+    <div
+      v-if="item.meta.showBadge"
+      class="art-badge"
+      :style="{ right: level === 0 ? '10px' : '20px' }"
+    />
+    <div v-if="item.meta.showTextBadge && level !== 0" class="art-text-badge">
+      {{ item.meta.showTextBadge }}
+    </div>
+  </ElMenuItem>
 </template>
 
 <script lang="ts" setup>
-  import { computed } from 'vue'
-  import { MenuListType } from '@/types/menu'
-  import { handleMenuJump } from '@/utils/jump'
-  import { formatMenuTitle } from '@/router/utils/utils'
+  import { computed, type PropType } from 'vue'
+  import { AppRouteRecord } from '@/types/router'
+  import { handleMenuJump } from '@/utils/navigation'
+  import { formatMenuTitle } from '@/utils/router'
 
   const props = defineProps({
     item: {
-      type: Object as PropType<MenuListType>,
+      type: Object as PropType<AppRouteRecord>,
       required: true
     },
     theme: {
@@ -60,17 +68,17 @@
 
   const emit = defineEmits(['close'])
 
-  // 计算当前项是否有子菜单
-  const hasChildren = computed(() => {
-    return props.item.children && props.item.children.length > 0
-  })
-
   // 过滤后的子菜单项（不包含隐藏的）
   const filteredChildren = computed(() => {
     return props.item.children?.filter((child) => !child.meta.isHide) || []
   })
 
-  const goPage = (item: MenuListType) => {
+  // 计算当前项是否有可见的子菜单
+  const hasChildren = computed(() => {
+    return filteredChildren.value.length > 0
+  })
+
+  const goPage = (item: AppRouteRecord) => {
     closeMenu()
     handleMenuJump(item)
   }
@@ -80,21 +88,8 @@
   }
 </script>
 
-<style lang="scss" scoped>
-  .el-sub-menu {
-    padding: 0 !important;
-
-    :deep(.el-sub-menu__title) {
-      padding: 0 30px 0 15px !important;
-
-      .el-sub-menu__icon-arrow {
-        right: 10px !important;
-      }
-    }
-  }
-
-  .menu-icon {
-    margin-right: 5px;
-    font-size: 16px;
+<style scoped>
+  :deep(.el-sub-menu__title .el-sub-menu__icon-arrow) {
+    right: 10px !important;
   }
 </style>

@@ -1,23 +1,55 @@
-import axios, { InternalAxiosRequestConfig, AxiosRequestConfig, AxiosResponse } from 'axios'
-import { ElMessage } from 'element-plus'
-import { useUserStore } from '@/store/modules/user'
-import EmojiText from '../emojo'
-import { ApiStatus } from './status'
+/**
+ * HTTP 请求封装模块
+ * 基于 Axios 封装的 HTTP 请求工具，提供统一的请求/响应处理
+ *
+ * ## 主要功能
+ *
+ * - 请求/响应拦截器（自动添加 Token、统一错误处理）
+ * - 401 未授权自动登出（带防抖机制）
+ * - 请求失败自动重试（可配置）
+ * - 统一的成功/错误消息提示
+ * - 支持 GET/POST/PUT/DELETE 等常用方法
+ *
+ * @module utils/http
+ * @author Art Design Pro Team
+ */
 
+import axios, { AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
+import { useUserStore } from '@/store/modules/user'
+import { ApiStatus } from './status'
+import { HttpError, handleError, showError, showSuccess } from './error'
+import { $t } from '@/locales'
+import { BaseResponse } from '@/types'
+
+/** 请求配置常量 */
+const REQUEST_TIMEOUT = 15000
+const LOGOUT_DELAY = 500
+const MAX_RETRIES = 0
+const RETRY_DELAY = 1000
+const UNAUTHORIZED_DEBOUNCE_TIME = 3000
+
+/** 401防抖状态 */
+let isUnauthorizedErrorShown = false
+let unauthorizedTimer: NodeJS.Timeout | null = null
+
+/** 扩展 AxiosRequestConfig */
+interface ExtendedAxiosRequestConfig extends AxiosRequestConfig {
+  showErrorMessage?: boolean
+  showSuccessMessage?: boolean
+}
+
+const { VITE_API_URL, VITE_WITH_CREDENTIALS } = import.meta.env
+
+/** Axios实例 */
 const axiosInstance = axios.create({
-  timeout: 15000, // 请求超时时间(毫秒)
-  baseURL: import.meta.env.VITE_API_URL, // API地址
-  withCredentials: true, // 异步请求携带cookie
-  transformRequest: [(data) => JSON.stringify(data)], // 请求数据转换为 JSON 字符串
-  validateStatus: (status) => status >= 200 && status < 300, // 只接受 2xx 的状态码
-  headers: {
-    get: { 'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8' },
-    post: { 'Content-Type': 'application/json;charset=utf-8' }
-  },
+  timeout: REQUEST_TIMEOUT,
+  baseURL: VITE_API_URL,
+  withCredentials: VITE_WITH_CREDENTIALS === 'true',
+  validateStatus: (status) => status >= 200 && status < 300,
   transformResponse: [
     (data, headers) => {
       const contentType = headers['content-type']
-      if (contentType && contentType.includes('application/json')) {
+      if (contentType?.includes('application/json')) {
         try {
           return JSON.parse(data)
         } catch {
@@ -29,93 +61,153 @@ const axiosInstance = axios.create({
   ]
 })
 
-// 请求拦截器
+/** 请求拦截器 */
 axiosInstance.interceptors.request.use(
   (request: InternalAxiosRequestConfig) => {
     const { accessToken } = useUserStore()
+    if (accessToken) request.headers.set('Authorization', accessToken)
 
-    // 如果 token 存在，则设置请求头
-    if (accessToken) {
-      request.headers.set({
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + accessToken
-      })
+    if (request.data && !(request.data instanceof FormData) && !request.headers['Content-Type']) {
+      request.headers.set('Content-Type', 'application/json')
+      request.data = JSON.stringify(request.data)
     }
 
-    return request // 返回修改后的配置
+    return request
   },
   (error) => {
-    ElMessage.error(`服务器异常！ ${EmojiText[500]}`) // 显示错误消息
-    return Promise.reject(error) // 返回拒绝的 Promise
-  }
-)
-
-// 响应拦截器
-axiosInstance.interceptors.response.use(
-  (response: AxiosResponse) => response,
-  (error) => {
-    if (axios.isCancel(error)) {
-      console.log('repeated request: ' + error.message)
-    } else {
-      const status = error.response?.status
-      if (status === ApiStatus.Unauthorized) {
-        console.log('user Unauthorized: ' + error.message)
-        // 1. 清除用户 token
-        const userStore = useUserStore()
-        // 2. 显示过期提示
-        ElMessage.error(`登录状态已过期，请重新登录！ ${EmojiText[401] || '🔒'}`)
-        userStore.logOut()
-      } else {
-        const errorMessage = error.response?.data.msg
-        ElMessage.error(
-          errorMessage
-            ? `${errorMessage} ${EmojiText[500]}`
-            : `请求超时或服务器异常！${EmojiText[500]}`
-        )
-      }
-    }
+    showError(createHttpError($t('httpMsg.requestConfigError'), ApiStatus.error))
     return Promise.reject(error)
   }
 )
 
-// 请求
-async function request<T = any>(config: AxiosRequestConfig): Promise<T> {
-  // 对 POST | PUT 请求特殊处理
-  if (config.method?.toUpperCase() === 'POST' || config.method?.toUpperCase() === 'PUT') {
-    // 如果已经有 data，则保留原有的 data
-    if (config.params && !config.data) {
-      config.data = config.params
-      config.params = undefined // 使用 undefined 而不是空对象
-    }
+/** 响应拦截器 */
+axiosInstance.interceptors.response.use(
+  (response: AxiosResponse<BaseResponse>) => {
+    const { code, msg } = response.data
+    if (code === ApiStatus.success) return response
+    if (code === ApiStatus.unauthorized) handleUnauthorizedError(msg)
+    throw createHttpError(msg || $t('httpMsg.requestFailed'), code)
+  },
+  (error) => {
+    if (error.response?.status === ApiStatus.unauthorized) handleUnauthorizedError()
+    return Promise.reject(handleError(error))
+  }
+)
+
+/** 统一创建HttpError */
+function createHttpError(message: string, code: number) {
+  return new HttpError(message, code)
+}
+
+/** 处理401错误（带防抖） */
+function handleUnauthorizedError(message?: string): never {
+  const error = createHttpError(message || $t('httpMsg.unauthorized'), ApiStatus.unauthorized)
+
+  if (!isUnauthorizedErrorShown) {
+    isUnauthorizedErrorShown = true
+    logOut()
+
+    unauthorizedTimer = setTimeout(resetUnauthorizedError, UNAUTHORIZED_DEBOUNCE_TIME)
+
+    showError(error, true)
+    throw error
   }
 
+  throw error
+}
+
+/** 重置401防抖状态 */
+function resetUnauthorizedError() {
+  isUnauthorizedErrorShown = false
+  if (unauthorizedTimer) clearTimeout(unauthorizedTimer)
+  unauthorizedTimer = null
+}
+
+/** 退出登录函数 */
+function logOut() {
+  setTimeout(() => {
+    useUserStore().logOut()
+  }, LOGOUT_DELAY)
+}
+
+/** 是否需要重试 */
+function shouldRetry(statusCode: number) {
+  return [
+    ApiStatus.requestTimeout,
+    ApiStatus.internalServerError,
+    ApiStatus.badGateway,
+    ApiStatus.serviceUnavailable,
+    ApiStatus.gatewayTimeout
+  ].includes(statusCode)
+}
+
+/** 请求重试逻辑 */
+async function retryRequest<T>(
+  config: ExtendedAxiosRequestConfig,
+  retries: number = MAX_RETRIES
+): Promise<T> {
   try {
-    const res = await axiosInstance.request<T>({ ...config })
-    return res.data
-  } catch (e) {
-    if (axios.isAxiosError(e)) {
-      // 可以在这里处理 Axios 错误
+    return await request<T>(config)
+  } catch (error) {
+    if (retries > 0 && error instanceof HttpError && shouldRetry(error.code)) {
+      await delay(RETRY_DELAY)
+      return retryRequest<T>(config, retries - 1)
     }
-    return Promise.reject(e)
+    throw error
   }
 }
 
-// API 方法集合
+/** 延迟函数 */
+function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+/** 请求函数 */
+async function request<T = any>(config: ExtendedAxiosRequestConfig): Promise<T> {
+  // POST | PUT 参数自动填充
+  if (
+    ['POST', 'PUT'].includes(config.method?.toUpperCase() || '') &&
+    config.params &&
+    !config.data
+  ) {
+    config.data = config.params
+    config.params = undefined
+  }
+
+  try {
+    const res = await axiosInstance.request<BaseResponse<T>>(config)
+
+    // 显示成功消息
+    if (config.showSuccessMessage && res.data.msg) {
+      showSuccess(res.data.msg)
+    }
+
+    return res.data.data as T
+  } catch (error) {
+    if (error instanceof HttpError && error.code !== ApiStatus.unauthorized) {
+      const showMsg = config.showErrorMessage !== false
+      showError(error, showMsg)
+    }
+    return Promise.reject(error)
+  }
+}
+
+/** API方法集合 */
 const api = {
-  get<T>(config: AxiosRequestConfig): Promise<T> {
-    return request({ ...config, method: 'GET' }) // GET 请求
+  get<T>(config: ExtendedAxiosRequestConfig) {
+    return retryRequest<T>({ ...config, method: 'GET' })
   },
-  post<T>(config: AxiosRequestConfig): Promise<T> {
-    return request({ ...config, method: 'POST' }) // POST 请求
+  post<T>(config: ExtendedAxiosRequestConfig) {
+    return retryRequest<T>({ ...config, method: 'POST' })
   },
-  put<T>(config: AxiosRequestConfig): Promise<T> {
-    return request({ ...config, method: 'PUT' }) // PUT 请求
+  put<T>(config: ExtendedAxiosRequestConfig) {
+    return retryRequest<T>({ ...config, method: 'PUT' })
   },
-  del<T>(config: AxiosRequestConfig): Promise<T> {
-    return request({ ...config, method: 'DELETE' }) // DELETE 请求
+  del<T>(config: ExtendedAxiosRequestConfig) {
+    return retryRequest<T>({ ...config, method: 'DELETE' })
   },
-  request<T>(config: AxiosRequestConfig): Promise<T> {
-    return request({ ...config }) // 通用请求
+  request<T>(config: ExtendedAxiosRequestConfig) {
+    return retryRequest<T>(config)
   }
 }
 

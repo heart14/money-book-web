@@ -30,9 +30,9 @@ export function useSettingsHandlers() {
     setBodyClass: (className: string, add: boolean) => {
       const el = document.getElementsByTagName('body')[0]
       if (add) {
-        el.setAttribute('class', className)
+        el.classList.add(className)
       } else {
-        el.removeAttribute('class')
+        el.classList.remove(className)
       }
     }
   }
@@ -68,6 +68,9 @@ export function useSettingsHandlers() {
 
     // 显示菜单按钮
     menuButton: createToggleHandler(() => settingStore.setButton()),
+
+    // 显示快速入口
+    fastEnter: createToggleHandler(() => settingStore.setFastEnter()),
 
     // 显示刷新按钮
     refreshButton: createToggleHandler(() => settingStore.setShowRefreshButton()),

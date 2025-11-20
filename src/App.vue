@@ -8,11 +8,10 @@
   import { useUserStore } from './store/modules/user'
   import zh from 'element-plus/es/locale/lang/zh-cn'
   import en from 'element-plus/es/locale/lang/en'
-  import { systemUpgrade } from './utils/upgrade'
-  import { UserService } from './api/usersApi'
-  import { ApiStatus } from './utils/http/status'
-  import { checkStorageCompatibility } from './utils/storage/storage'
-  import { setThemeTransitionClass } from './utils/theme/animation'
+  import { systemUpgrade } from './utils/sys'
+  import { toggleTransition } from './utils/ui/animation'
+  import { checkStorageCompatibility } from './utils/storage'
+  import { initializeTheme } from './hooks/core/useTheme'
 
   const userStore = useUserStore()
   const { language } = storeToRefs(userStore)
@@ -23,27 +22,13 @@
   }
 
   onBeforeMount(() => {
-    setThemeTransitionClass(true)
+    toggleTransition(true)
+    initializeTheme()
   })
 
   onMounted(() => {
-    // 检查存储兼容性
     checkStorageCompatibility()
-    // 提升暗黑主题下页面刷新视觉体验
-    setThemeTransitionClass(false)
-    // 系统升级
+    toggleTransition(false)
     systemUpgrade()
-    // 获取用户信息
-    getUserInfo()
   })
-
-  // 获取用户信息
-  const getUserInfo = async () => {
-    if (userStore.isLogin) {
-      const res = await UserService.getUserInfo()
-      if (res.code === ApiStatus.success) {
-        userStore.setUserInfo(res.data)
-      }
-    }
-  }
 </script>

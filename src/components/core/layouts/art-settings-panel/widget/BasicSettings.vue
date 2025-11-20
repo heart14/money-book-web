@@ -1,15 +1,13 @@
 <template>
-  <div class="basic-settings">
-    <SectionTitle :title="$t('setting.basics.title')" :style="{ marginTop: '40px' }" />
-    <div class="basic-box">
-      <SettingItem
-        v-for="config in basicSettingsConfig"
-        :key="config.key"
-        :config="config"
-        :model-value="getSettingValue(config.key)"
-        @change="handleSettingChange(config.handler, $event)"
-      />
-    </div>
+  <div>
+    <SectionTitle :title="$t('setting.basics.title')" class="mt-10" />
+    <SettingItem
+      v-for="config in basicSettingsConfig"
+      :key="config.key"
+      :config="config"
+      :model-value="getSettingValue(config.key)"
+      @change="handleSettingChange(config.handler, $event)"
+    />
   </div>
 </template>
 
@@ -29,6 +27,7 @@
   const {
     uniqueOpened,
     showMenuButton,
+    showFastEnter,
     showRefreshButton,
     showCrumbs,
     showWorkTab,
@@ -46,6 +45,7 @@
   const settingValueMap = {
     uniqueOpened,
     showMenuButton,
+    showFastEnter,
     showRefreshButton,
     showCrumbs,
     showWorkTab,
@@ -75,13 +75,3 @@
     }
   }
 </script>
-
-<style lang="scss" scoped>
-  .basic-settings {
-    .basic-box {
-      position: relative;
-      z-index: 10;
-      background: transparent !important;
-    }
-  }
-</style>

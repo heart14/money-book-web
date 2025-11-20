@@ -1,14 +1,16 @@
+<!-- 403页面 -->
 <template>
-  <ArtException :data="data" />
+  <ArtException
+    :data="{
+      title: '403',
+      desc: $t('exceptionPage.403'),
+      btnText: $t('exceptionPage.gohome'),
+      imgUrl
+    }"
+  />
 </template>
 
 <script setup lang="ts">
-  import imgUrl from '@imgs/state/403.png'
-
-  const data = reactive({
-    title: '403',
-    desc: '抱歉，你无权访问该页面',
-    btnText: '返回首页',
-    imgUrl
-  })
+  import imgUrl from '@imgs/svg/403.svg'
+  defineOptions({ name: 'Exception403' })
 </script>

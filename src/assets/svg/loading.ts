@@ -3,11 +3,11 @@ export const fourDotsSpinnerSvg = `
   <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
     <style>
       .spinner {
-        transform-origin: center;
+        transform-origin: 20px 20px;
         animation: rotate 1.6s linear infinite;
       }
       .dot {
-        fill: var(--main-color);
+        fill: var(--theme-color);
         animation: fade 1.6s infinite;
       }
       .dot:nth-child(1) { animation-delay: 0s; }

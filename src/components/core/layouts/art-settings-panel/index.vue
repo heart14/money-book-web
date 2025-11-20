@@ -1,3 +1,4 @@
+<!-- 设置面板 -->
 <template>
   <div class="layout-settings">
     <SettingDrawer v-model="showDrawer" @open="handleOpen" @close="handleClose">
@@ -17,6 +18,8 @@
       <ContainerSettings />
       <!-- 基础配置 -->
       <BasicSettings />
+      <!-- 操作按钮 -->
+      <SettingActions />
     </SettingDrawer>
   </div>
 </template>
@@ -24,7 +27,6 @@
 <script setup lang="ts">
   import { useSettingsPanel } from './composables/useSettingsPanel'
 
-  // 组件导入
   import SettingDrawer from './widget/SettingDrawer.vue'
   import SettingHeader from './widget/SettingHeader.vue'
   import ThemeSettings from './widget/ThemeSettings.vue'
@@ -34,9 +36,12 @@
   import BoxStyleSettings from './widget/BoxStyleSettings.vue'
   import ContainerSettings from './widget/ContainerSettings.vue'
   import BasicSettings from './widget/BasicSettings.vue'
+  import SettingActions from './widget/SettingActions.vue'
 
-  // Props 定义
+  defineOptions({ name: 'ArtSettingsPanel' })
+
   interface Props {
+    /** 是否打开 */
     open?: boolean
   }
 
@@ -47,17 +52,14 @@
   const { showDrawer } = settingsPanel
 
   // 获取各种处理器
-  const { handleWindowResize } = settingsPanel.useResponsiveLayout()
   const { handleOpen, handleClose, closeDrawer } = settingsPanel.useDrawerControl()
   const { initializeSettings, cleanupSettings } = settingsPanel.useSettingsInitializer()
 
   // 监听 props 变化
   settingsPanel.usePropsWatcher(props)
 
-  // 生命周期
   onMounted(() => {
     initializeSettings()
-    handleWindowResize()
   })
 
   onUnmounted(() => {
