@@ -86,6 +86,16 @@ declare namespace Api {
     }
   }
 
+  /** Dashboard页面 */
+  namespace Dashboard {
+    /** 统计卡片项 */
+    interface CardDataItem {
+      des: string
+      num: number
+      change: string
+    }
+  }
+
   /** 系统管理类型 */
   namespace SystemManage {
     /** 用户列表 */
