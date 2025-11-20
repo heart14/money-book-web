@@ -3,12 +3,17 @@
     <ElCol v-for="(item, index) in dataList" :key="index" :sm="12" :md="6" :lg="6">
       <div class="art-card relative flex flex-col justify-center h-35 px-5 mb-5 max-sm:mb-4">
         <span class="text-g-700 text-sm">{{ item.des }}</span>
-        <ArtCountTo class="text-[26px] font-medium mt-2" :target="item.num" :duration="1300" />
+        <ArtCountTo
+          class="text-[26px] font-medium mt-2"
+          :target="item.num"
+          :duration="1300"
+          :decimals="item.decimals"
+        />
         <div class="flex-c mt-1">
-          <span class="text-xs text-g-600">较上周</span>
+          <span class="text-xs text-g-600">较上年</span>
           <span
             class="ml-1 text-xs font-semibold"
-            :class="[item.change.indexOf('+') === -1 ? 'text-danger' : 'text-success']"
+            :class="item.change.includes('+') ? 'text-success' : 'text-danger'"
           >
             {{ item.change }}
           </span>
@@ -16,7 +21,8 @@
         <div
           class="absolute top-0 bottom-0 right-5 m-auto size-12.5 rounded-xl flex-cc bg-theme/10"
         >
-          <ArtSvgIcon :icon="item.icon" class="text-xl text-theme" />
+          <!-- 本地字典取图标 -->
+          <ArtSvgIcon :icon="DASHBOARD_ICON[item.des]" class="text-xl text-theme" />
         </div>
       </div>
     </ElCol>
@@ -24,51 +30,40 @@
 </template>
 
 <script setup lang="ts">
-  interface CardDataItem {
-    des: string
-    icon: string
-    startVal: number
-    duration: number
-    num: number
-    change: string
+  import { ref, onMounted } from 'vue'
+  import { fetchStatCardList } from '@/api/dashboard'
+  import { DASHBOARD_ICON } from '@/utils/constants/icon'
+
+  /* 响应式数据 */
+  const rawList = ref<Api.Dashboard.CardDataItem[]>([])
+  const loading = ref(false)
+  const error = ref('')
+
+  interface CardItem extends Api.Dashboard.CardDataItem {
+    /** 小数位 0 或 2 */
+    decimals: 0 | 2
+  }
+  const dataList = computed<CardItem[]>(() =>
+    rawList.value.map((item) => ({
+      ...item,
+      decimals: item.des.endsWith('笔数') ? 0 : 2
+    }))
+  )
+
+  /* 拉取数据 */
+  const loadData = async () => {
+    loading.value = true
+    error.value = ''
+    try {
+      const res = await fetchStatCardList()
+      rawList.value = (res as any).data ?? res
+    } catch (e: any) {
+      error.value = e?.message || '网络错误'
+    } finally {
+      loading.value = false
+    }
   }
 
-  /**
-   * 卡片统计数据列表
-   * 展示总访问次数、在线访客数、点击量和新用户等核心数据指标
-   */
-  const dataList = reactive<CardDataItem[]>([
-    {
-      des: '总访问次数',
-      icon: 'ri:pie-chart-line',
-      startVal: 0,
-      duration: 1000,
-      num: 9120,
-      change: '+20%'
-    },
-    {
-      des: '在线访客数',
-      icon: 'ri:group-line',
-      startVal: 0,
-      duration: 1000,
-      num: 182,
-      change: '+10%'
-    },
-    {
-      des: '点击量',
-      icon: 'ri:fire-line',
-      startVal: 0,
-      duration: 1000,
-      num: 9520,
-      change: '-12%'
-    },
-    {
-      des: '新用户',
-      icon: 'ri:progress-2-line',
-      startVal: 0,
-      duration: 1000,
-      num: 156,
-      change: '+30%'
-    }
-  ])
+  /* 组件挂载后自动请求 */
+  onMounted(() => loadData())
 </script>
