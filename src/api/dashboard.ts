@@ -9,3 +9,13 @@ export function fetchStatCardList() {
     url: '/dashboard/cardListData'
   })
 }
+
+/**
+ * 获取月度收入数据
+ * @returns 月度收入数据
+ */
+export function fetchMonthlyIncome() {
+  return request.get<Api.Dashboard.MonthlyIncomeItem>({
+    url: '/dashboard/monthlyIncome'
+  })
+}

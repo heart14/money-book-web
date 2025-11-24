@@ -88,11 +88,15 @@ declare namespace Api {
 
   /** Dashboard页面 */
   namespace Dashboard {
-    /** 统计卡片项 */
     interface CardDataItem {
       des: string
       num: number
       change: string
+    }
+
+    interface MonthlyIncomeItem {
+      month: string
+      totalIncome: number
     }
   }
 

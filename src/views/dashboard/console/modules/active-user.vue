@@ -9,9 +9,9 @@
       :xAxisData="xAxisLabels"
     />
     <div class="ml-1">
-      <h3 class="mt-5 text-lg font-medium">用户概述</h3>
-      <p class="mt-1 text-sm">比上周 <span class="text-success font-medium">+23%</span></p>
-      <p class="mt-1 text-sm">我们为您创建了多个选项，可将它们组合在一起并定制为像素完美的页面</p>
+      <h3 class="mt-5 text-lg font-medium">收入情况</h3>
+      <!-- <p class="mt-1 text-sm">比上月 <span class="text-success font-medium">+23%</span></p>
+      <p class="mt-1 text-sm"> --</p> -->
     </div>
     <div class="flex-b mt-2">
       <div class="flex-1" v-for="(item, index) in list" :key="index">
@@ -23,25 +23,48 @@
 </template>
 
 <script setup lang="ts">
+  import { ref, onMounted } from 'vue'
+  import { fetchMonthlyIncome } from '@/api/dashboard'
+  const monthlyIncomeList = ref<Api.Dashboard.MonthlyIncomeItem[]>([])
+  const loading = ref(false)
+  const error = ref('')
+
   interface UserStatItem {
     name: string
     num: string
   }
 
-  // 最近9个月
-  const xAxisLabels = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月']
+  const xAxisLabels = ref()
 
-  // 每月活跃用户数
-  const chartData = [160, 100, 150, 80, 190, 100, 175, 120, 160]
+  const chartData = ref()
 
-  /**
-   * 用户统计数据列表
-   * 包含总用户量、总访问量、日访问量和周同比等关键指标
-   */
+  const loadMonthlyIncomeData = async () => {
+    loading.value = true
+    error.value = ''
+    try {
+      const res = await fetchMonthlyIncome()
+      console.log('res---', res)
+      monthlyIncomeList.value = (res as any).data ?? res
+      // 月份中文
+      const monthName = (m: string) => `${Number(m.slice(-2))}月`
+
+      const monthList = monthlyIncomeList.value.map((item) => monthName(item.month))
+      const incomeList = monthlyIncomeList.value.map((item) => item.totalIncome)
+
+      xAxisLabels.value = monthList
+      chartData.value = incomeList
+    } catch (e: any) {
+      error.value = e?.message || '网络错误'
+    } finally {
+      loading.value = false
+    }
+  }
+
   const list: UserStatItem[] = [
-    { name: '总用户量', num: '32k' },
-    { name: '总访问量', num: '128k' },
-    { name: '日访问量', num: '1.2k' },
-    { name: '周同比', num: '+5%' }
+    { name: '薪酬福利', num: '32k' },
+    { name: '绩效奖金', num: '128k' },
+    { name: '其它收入', num: '1.2k' }
   ]
+
+  onMounted(() => loadMonthlyIncomeData())
 </script>
