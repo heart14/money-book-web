@@ -98,6 +98,11 @@ declare namespace Api {
       month: string
       totalIncome: number
     }
+
+    interface CategoryIncomeItem {
+      name: string
+      num: number
+    }
   }
 
   /** 系统管理类型 */

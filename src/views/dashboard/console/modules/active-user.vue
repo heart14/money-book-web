@@ -9,12 +9,12 @@
       :xAxisData="xAxisLabels"
     />
     <div class="ml-1">
-      <h3 class="mt-5 text-lg font-medium">收入情况</h3>
-      <!-- <p class="mt-1 text-sm">比上月 <span class="text-success font-medium">+23%</span></p>
-      <p class="mt-1 text-sm"> --</p> -->
+      <!-- <p class="mt-1 text-sm"> - </p> -->
+      <h3 class="mt-5 text-lg font-medium">收入情况（元）</h3>
+      <!-- <p class="mt-1 text-sm"> - </p> -->
     </div>
     <div class="flex-b mt-2">
-      <div class="flex-1" v-for="(item, index) in list" :key="index">
+      <div class="flex-1" v-for="(item, index) in categoryIncomeList" :key="index">
         <p class="text-2xl text-g-900">{{ item.num }}</p>
         <p class="text-xs text-g-500">{{ item.name }}</p>
       </div>
@@ -24,18 +24,14 @@
 
 <script setup lang="ts">
   import { ref, onMounted } from 'vue'
-  import { fetchMonthlyIncome } from '@/api/dashboard'
+  import { fetchMonthlyIncome, fetchCategoryIncome } from '@/api/dashboard'
   const monthlyIncomeList = ref<Api.Dashboard.MonthlyIncomeItem[]>([])
   const loading = ref(false)
   const error = ref('')
 
-  interface UserStatItem {
-    name: string
-    num: string
-  }
+  const categoryIncomeList = ref<Api.Dashboard.CategoryIncomeItem[]>([])
 
   const xAxisLabels = ref()
-
   const chartData = ref()
 
   const loadMonthlyIncomeData = async () => {
@@ -60,11 +56,22 @@
     }
   }
 
-  const list: UserStatItem[] = [
-    { name: '薪酬福利', num: '32k' },
-    { name: '绩效奖金', num: '128k' },
-    { name: '其它收入', num: '1.2k' }
-  ]
+  const loadCategoryIncomeData = async () => {
+    loading.value = true
+    error.value = ''
+    try {
+      const res = await fetchCategoryIncome()
+      console.log('res---', res)
+      categoryIncomeList.value = (res as any).data ?? res
+    } catch (e: any) {
+      error.value = e?.message || '网络错误'
+    } finally {
+      loading.value = false
+    }
+  }
 
-  onMounted(() => loadMonthlyIncomeData())
+  onMounted(() => {
+    loadMonthlyIncomeData()
+    loadCategoryIncomeData()
+  })
 </script>

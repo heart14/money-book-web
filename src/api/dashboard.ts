@@ -19,3 +19,13 @@ export function fetchMonthlyIncome() {
     url: '/dashboard/monthlyIncome'
   })
 }
+
+/**
+ * 获取分类收入统计数据
+ * @returns 分类收入统计数据
+ */
+export function fetchCategoryIncome() {
+  return request.get<Api.Dashboard.CategoryIncomeItem>({
+    url: '/dashboard/categoryIncome'
+  })
+}
