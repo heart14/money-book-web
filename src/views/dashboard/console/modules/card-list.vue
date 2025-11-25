@@ -7,7 +7,7 @@
           class="text-[26px] font-medium mt-2"
           :target="item.num"
           :duration="1300"
-          :decimals="item.decimals"
+          :decimals="2"
         />
         <div class="flex-c mt-1">
           <span class="text-xs text-g-600">较上年</span>
@@ -35,20 +35,9 @@
   import { DASHBOARD_ICON } from '@/utils/constants/icon'
 
   /* 响应式数据 */
-  const rawList = ref<Api.Dashboard.CardDataItem[]>([])
+  const dataList = ref<Api.Dashboard.CardDataItem[]>([])
   const loading = ref(false)
   const error = ref('')
-
-  interface CardItem extends Api.Dashboard.CardDataItem {
-    /** 小数位 0 或 2 */
-    decimals: 0 | 2
-  }
-  const dataList = computed<CardItem[]>(() =>
-    rawList.value.map((item) => ({
-      ...item,
-      decimals: item.des.endsWith('笔数') ? 0 : 2
-    }))
-  )
 
   /* 拉取数据 */
   const loadData = async () => {
@@ -56,7 +45,7 @@
     error.value = ''
     try {
       const res = await fetchStatCardList()
-      rawList.value = (res as any).data ?? res
+      dataList.value = (res as any).data ?? res
     } catch (e: any) {
       error.value = e?.message || '网络错误'
     } finally {

@@ -3,7 +3,7 @@
  */
 export const DASHBOARD_ICON: Record<string, string> = {
   总收入: 'ri:pie-chart-line',
-  总支出: 'ri:group-line',
-  收入笔数: 'ri:fire-line',
-  支出笔数: 'ri:progress-2-line'
+  总支出: 'ri:progress-2-line',
+  总结余: 'ri:fire-line',
+  总收支共项: 'ri:group-line'
 }
