@@ -21,6 +21,16 @@ export function fetchMonthlyIncome() {
 }
 
 /**
+ * 获取月度支出数据
+ * @returns 月度支出数据
+ */
+export function fetchMonthlyExpense() {
+  return request.get<Api.Dashboard.MonthlyExpenseItem>({
+    url: '/dashboard/monthlyExpense'
+  })
+}
+
+/**
  * 获取分类收入统计数据
  * @returns 分类收入统计数据
  */

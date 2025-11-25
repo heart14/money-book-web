@@ -99,6 +99,11 @@ declare namespace Api {
       totalIncome: number
     }
 
+    interface MonthlyExpenseItem {
+      month: string
+      totalExpense: number
+    }
+
     interface CategoryIncomeItem {
       name: string
       num: number
