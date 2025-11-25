@@ -1,11 +1,5 @@
 <template>
   <div class="art-card h-105 p-5 mb-5 max-sm:mb-4">
-    <div class="art-card-header">
-      <div class="title">
-        <h4>访问量</h4>
-        <p>今年增长<span class="text-success">+15%</span></p>
-      </div>
-    </div>
     <ArtLineChart
       height="calc(100% - 56px)"
       :data="data"
@@ -13,6 +7,9 @@
       :showAreaColor="true"
       :showAxisLine="false"
     />
+    <div class="ml-1">
+      <h3 class="mt-5 text-lg font-medium">🔼支出情况（元）</h3>
+    </div>
   </div>
 </template>
 

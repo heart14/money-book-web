@@ -3,15 +3,13 @@
     <ArtBarChart
       class="box-border p-2"
       barWidth="50%"
-      height="13.7rem"
+      height="17.7rem"
       :showAxisLine="false"
       :data="chartData"
       :xAxisData="xAxisLabels"
     />
     <div class="ml-1">
-      <h3 class="mt-5 text-lg font-medium">收入情况（元）</h3>
-      <p class="mt-1 text-sm"> > </p>
-      <p class="mt-1 text-sm"> > </p>
+      <h3 class="mt-5 text-lg font-medium">🔽收入情况（元）</h3>
     </div>
     <div class="flex-b mt-2">
       <div class="flex-1" v-for="(item, index) in categoryIncomeList" :key="index">
