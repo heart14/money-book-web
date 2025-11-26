@@ -14,7 +14,7 @@
 
     <ElRow :gutter="20">
       <ElCol :sm="24" :md="24" :lg="12">
-        <NewUser />
+        <CategoryExpense />
       </ElCol>
       <ElCol :sm="24" :md="12" :lg="6">
         <Dynamic />
@@ -32,7 +32,7 @@
   import CardList from './modules/card-list.vue'
   import Income from './modules/income.vue'
   import Expense from './modules/expense.vue'
-  import NewUser from './modules/new-user.vue'
+  import CategoryExpense from './modules/category-expense.vue'
   import Dynamic from './modules/dynamic-stats.vue'
   import TodoList from './modules/todo-list.vue'
   import AboutProject from './modules/about-project.vue'
