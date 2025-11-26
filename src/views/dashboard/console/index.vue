@@ -13,10 +13,10 @@
     </ElRow>
 
     <ElRow :gutter="20">
-      <ElCol :sm="24" :md="24" :lg="12">
+      <ElCol :sm="24" :md="24" :lg="10">
         <CategoryExpense />
       </ElCol>
-      <ElCol :sm="24" :md="12" :lg="6">
+      <ElCol :sm="24" :md="12" :lg="8">
         <LargeConsume />
       </ElCol>
       <ElCol :sm="24" :md="12" :lg="6">

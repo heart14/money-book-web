@@ -49,3 +49,13 @@ export function fetchCategoryExpense() {
     url: '/dashboard/categoryExpense'
   })
 }
+
+/**
+ * 获取大额消费记录数据
+ * @returns 大额消费记录数据
+ */
+export function fetchLargeConsume() {
+  return request.get<Api.Dashboard.LargeConsumeItem>({
+    url: '/dashboard/largeConsume'
+  })
+}

@@ -114,6 +114,12 @@ declare namespace Api {
       num: number
       count: number
     }
+
+    interface LargeConsumeItem {
+      date: string
+      title: string
+      amount: string
+    }
   }
 
   /** 系统管理类型 */
