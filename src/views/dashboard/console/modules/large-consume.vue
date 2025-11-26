@@ -2,7 +2,7 @@
   <div class="art-card h-128 p-5 mb-5 max-sm:mb-4">
     <div class="art-card-header">
       <div class="title">
-        <h4>大额消费</h4>
+        <h4>💰大额消费</h4>
         <p>单笔金额<span class="text-success">>= 1000</span></p>
       </div>
     </div>

@@ -2,7 +2,7 @@
   <div class="art-card h-128 p-5 mb-5 max-sm:mb-4">
     <div class="art-card-header">
       <div class="title">
-        <h4>心愿单</h4>
+        <h4>✅心愿单</h4>
         <p>已实现<span class="text-danger">3</span></p>
       </div>
     </div>

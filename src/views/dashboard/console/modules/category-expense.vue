@@ -2,7 +2,7 @@
   <div class="art-card h-128 p-5 mb-5 overflow-hidden max-sm:mb-4">
     <div class="art-card-header">
       <div class="title">
-        <h4>分类支出统计</h4>
+        <h4>🏆分类支出统计</h4>
       </div>
     </div>
     <div class="overflow-auto h-full">
@@ -15,7 +15,7 @@
         :header-cell-style="{ background: 'transparent' }"
       >
         <ElTableColumn prop="name" label="分类名称" width="200" />
-        <ElTableColumn prop="count" label="热度">
+        <ElTableColumn prop="count" label="支出频次">
           <template #default="scope">
             <ElProgress
               :percentage="scope.row.count"
