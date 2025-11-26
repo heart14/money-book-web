@@ -8,6 +8,7 @@
           :target="item.num"
           :duration="1300"
           :decimals="2"
+          separator=","
         />
         <div class="flex-c mt-1">
           <span class="text-xs text-g-600">较上年</span>
