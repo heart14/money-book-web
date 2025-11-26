@@ -2,8 +2,8 @@
   <div class="art-card h-128 p-5 mb-5 max-sm:mb-4">
     <div class="art-card-header">
       <div class="title">
-        <h4>代办事项</h4>
-        <p>待处理<span class="text-danger">3</span></p>
+        <h4>心愿单</h4>
+        <p>已实现<span class="text-danger">3</span></p>
       </div>
     </div>
 
@@ -15,7 +15,9 @@
           :key="index"
         >
           <div>
-            <p class="text-sm">{{ item.username }}</p>
+            <p class="text-sm" :class="item.complate ? 'text-warning' : 'text-success'">
+              {{ item.username }}
+            </p>
             <p class="text-g-500 mt-1">{{ item.date }}</p>
           </div>
           <ElCheckbox v-model="item.complate" />
@@ -38,33 +40,33 @@
    */
   const list = reactive<TodoItem[]>([
     {
-      username: '查看今天工作内容',
-      date: '上午 09:30',
+      username: 'Jaguar XEL',
+      date: '2023.08.23',
       complate: true
     },
     {
-      username: '回复邮件',
-      date: '上午 10:30',
+      username: 'Tesla Model 3',
+      date: '2024.11.09',
       complate: true
     },
     {
-      username: '工作汇报整理',
-      date: '上午 11:00',
+      username: 'iPhone 15 pro',
+      date: '2024.05.22',
       complate: true
     },
     {
-      username: '产品需求会议',
-      date: '下午 02:00',
+      username: 'iPhone 17 pro',
+      date: '',
       complate: false
     },
     {
-      username: '整理会议内容',
-      date: '下午 03:30',
+      username: '大疆无人机',
+      date: '',
       complate: false
     },
     {
-      username: '明天工作计划',
-      date: '下午 06:30',
+      username: 'Mac mini m4',
+      date: '',
       complate: false
     }
   ])
