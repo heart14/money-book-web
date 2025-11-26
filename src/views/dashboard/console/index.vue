@@ -17,7 +17,7 @@
         <CategoryExpense />
       </ElCol>
       <ElCol :sm="24" :md="12" :lg="6">
-        <Dynamic />
+        <LargeConsume />
       </ElCol>
       <ElCol :sm="24" :md="12" :lg="6">
         <TodoList />
@@ -33,7 +33,7 @@
   import Income from './modules/income.vue'
   import Expense from './modules/expense.vue'
   import CategoryExpense from './modules/category-expense.vue'
-  import Dynamic from './modules/dynamic-stats.vue'
+  import LargeConsume from './modules/large-consume.vue'
   import TodoList from './modules/todo-list.vue'
   import AboutProject from './modules/about-project.vue'
 
