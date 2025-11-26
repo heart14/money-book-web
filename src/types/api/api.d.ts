@@ -108,6 +108,12 @@ declare namespace Api {
       name: string
       num: number
     }
+
+    interface CategoryExpenseItem {
+      name: string
+      num: number
+      count: number
+    }
   }
 
   /** 系统管理类型 */

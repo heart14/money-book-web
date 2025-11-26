@@ -39,3 +39,13 @@ export function fetchCategoryIncome() {
     url: '/dashboard/categoryIncome'
   })
 }
+
+/**
+ * 获取分类支出统计数据
+ * @returns 分类支出统计数据
+ */
+export function fetchCategoryExpense() {
+  return request.get<Api.Dashboard.CategoryExpenseItem>({
+    url: '/dashboard/categoryExpense'
+  })
+}
