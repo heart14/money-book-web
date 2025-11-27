@@ -34,7 +34,7 @@
       <TransDialog
         v-model:visible="dialogVisible"
         :type="dialogType"
-        :user-data="currentTransData"
+        :trans-data="currentTransData"
         @submit="handleDialogSubmit"
       />
     </ElCard>

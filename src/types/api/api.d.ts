@@ -153,6 +153,23 @@ declare namespace Api {
     }
   }
 
+  namespace Category {
+    interface CategoryParam {
+      level?: number
+      type?: number
+    }
+
+    interface CategoryItem {
+      id: number
+      parentId: number
+      type: number
+      level: number
+      name: string
+      path: string
+      isDeleted: number
+    }
+  }
+
   /** 系统管理类型 */
   namespace SystemManage {
     /** 用户列表 */

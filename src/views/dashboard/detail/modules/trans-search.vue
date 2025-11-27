@@ -11,6 +11,9 @@
 </template>
 
 <script setup lang="ts">
+  import { ref, onMounted } from 'vue'
+  import { fetchCategoryList } from '@/api/dashboard'
+
   interface Props {
     modelValue: Record<string, any>
   }
@@ -35,61 +38,19 @@
   }
 
   // 动态 options
-  const typeOptions = ref<{ label: string; value: string; disabled?: boolean }[]>([])
-  const categoryOptions = ref<{ label: string; value: string; disabled?: boolean }[]>([])
+  const categoryOptions = ref<{ label: string; value: number }[]>([])
 
-  // 模拟接口返回收支类型数据
-  function fetchTypeOptions(): Promise<typeof typeOptions.value> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve([
-          { label: '收入', value: '1' },
-          { label: '支出', value: '2' },
-          { label: '收支', value: '3' }
-        ])
-      }, 1000)
-    })
-  }
+  // 收支类型数据
+  const typeOptions = ref([
+    { label: '收入', value: '1' },
+    { label: '支出', value: '2' },
+    { label: '收支', value: '3' }
+  ])
 
-  // 模拟接口返回分类数据
-  function fetchCategoryOptions(): Promise<typeof categoryOptions.value> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve([
-          { label: '薪酬福利', value: '11' },
-          { label: '绩效奖金', value: '12' },
-          { label: '其它', value: '21' },
-          { label: '餐饮美食', value: '31' },
-          { label: '生鲜食材', value: '32' },
-          { label: '烟酒茶叶', value: '33' },
-          { label: '生活缴费', value: '41' },
-          { label: '日用百货', value: '42' },
-          { label: '医疗保健', value: '43' },
-          { label: '服饰装扮', value: '44' },
-          { label: '美妆护理', value: '45' },
-          { label: '公共交通', value: '51' },
-          { label: '汽车购置', value: '52' },
-          { label: '保养维修', value: '53' },
-          { label: '加油充电', value: '54' },
-          { label: '停车过路', value: '55' },
-          { label: '旅游出行', value: '61' },
-          { label: '文娱演出', value: '62' },
-          { label: '运动户外', value: '63' },
-          { label: '3C数码', value: '64' },
-          { label: '创意潮玩', value: '65' },
-          { label: '充值订阅', value: '66' },
-          { label: '宠物消费', value: '71' },
-          { label: '订婚', value: '81' },
-          { label: '婚礼', value: '82' },
-          { label: '购房', value: '83' },
-          { label: '装修', value: '84' },
-          { label: '未分类', value: '85' },
-          { label: '红包转账', value: '91' },
-          { label: '投资理财', value: '92' },
-          { label: '借贷还款', value: '93' }
-        ])
-      }, 1000)
-    })
+  // 获取分类数据
+  const loadCategoryOptions = async () => {
+    const res = await fetchCategoryList({ type: formData.value.type })
+    categoryOptions.value = res.map((i) => ({ label: i.name, value: i.id }))
   }
 
   /**
@@ -131,9 +92,17 @@
   ]
 
   onMounted(async () => {
-    typeOptions.value = await fetchTypeOptions()
-    categoryOptions.value = await fetchCategoryOptions()
+    loadCategoryOptions()
   })
+
+  watch(
+    () => formData.value.type,
+    () => {
+      formData.value.cid = undefined
+      loadCategoryOptions()
+    },
+    { immediate: true }
+  )
 
   // 表单配置
   const formItems = computed(() => [

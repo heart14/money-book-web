@@ -73,3 +73,13 @@ export function fetchTransDetailList(params: Api.TransDetail.TransDetailPagePara
     params
   })
 }
+
+/**
+ * 查询交易分类列表
+ */
+export function fetchCategoryList(params?: Api.Category.CategoryParam) {
+  return request.get<Api.Category.CategoryItem[]>({
+    url: '/category/list',
+    params
+  })
+}

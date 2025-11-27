@@ -1,25 +1,26 @@
 <template>
   <ElDialog
     v-model="dialogVisible"
-    :title="dialogType === 'add' ? '添加用户' : '编辑用户'"
+    :title="dialogType === 'add' ? '新增交易记录' : '编辑交易记录'"
     width="30%"
     align-center
   >
     <ElForm ref="formRef" :model="formData" :rules="rules" label-width="80px">
-      <ElFormItem label="用户名" prop="username">
-        <ElInput v-model="formData.username" placeholder="请输入用户名" />
+      <ElFormItem label="标题" prop="title">
+        <ElInput v-model="formData.title" placeholder="请输入标题" />
       </ElFormItem>
-      <ElFormItem label="手机号" prop="phone">
-        <ElInput v-model="formData.phone" placeholder="请输入手机号" />
+      <ElFormItem label="金额" prop="amount">
+        <ElInput v-model="formData.amount" placeholder="请输入金额" />
       </ElFormItem>
-      <ElFormItem label="性别" prop="gender">
-        <ElSelect v-model="formData.gender">
-          <ElOption label="男" value="男" />
-          <ElOption label="女" value="女" />
+      <ElFormItem label="类型" prop="type">
+        <ElSelect v-model="formData.type">
+          <ElOption label="收入" value="1" />
+          <ElOption label="支出" value="2" />
+          <ElOption label="收支" value="3" />
         </ElSelect>
       </ElFormItem>
-      <ElFormItem label="角色" prop="role">
-        <ElSelect v-model="formData.role" multiple>
+      <!-- <ElFormItem label="角色" prop="role">
+        <ElSelect v-model="formData.role">
           <ElOption
             v-for="role in roleList"
             :key="role.roleCode"
@@ -27,7 +28,7 @@
             :label="role.roleName"
           />
         </ElSelect>
-      </ElFormItem>
+      </ElFormItem> -->
     </ElForm>
     <template #footer>
       <div class="dialog-footer">
@@ -39,13 +40,13 @@
 </template>
 
 <script setup lang="ts">
-  import { ROLE_LIST_DATA } from '@/mock/temp/formData'
+  // import { ROLE_LIST_DATA } from '@/mock/temp/formData'
   import type { FormInstance, FormRules } from 'element-plus'
 
   interface Props {
     visible: boolean
     type: string
-    userData?: Partial<Api.SystemManage.UserListItem>
+    transData?: Partial<Api.TransDetail.TransDetailItem>
   }
 
   interface Emits {
@@ -57,7 +58,7 @@
   const emit = defineEmits<Emits>()
 
   // 角色列表数据
-  const roleList = ref(ROLE_LIST_DATA)
+  // const roleList = ref(ROLE_LIST_DATA)
 
   // 对话框显示控制
   const dialogVisible = computed({
@@ -72,24 +73,23 @@
 
   // 表单数据
   const formData = reactive({
-    username: '',
-    phone: '',
-    gender: '男',
-    role: [] as string[]
+    title: '',
+    amount: 0,
+    type: 2,
+    cid: 85
   })
 
   // 表单验证规则
   const rules: FormRules = {
-    username: [
+    title: [
       { required: true, message: '请输入用户名', trigger: 'blur' },
       { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
     ],
-    phone: [
+    amount: [
       { required: true, message: '请输入手机号', trigger: 'blur' },
-      { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号格式', trigger: 'blur' }
+      { pattern: /^-?\d+(\.\d{1,2})?$/, message: '金额格式错误，最多两位小数', trigger: 'blur' }
     ],
-    gender: [{ required: true, message: '请选择性别', trigger: 'blur' }],
-    role: [{ required: true, message: '请选择角色', trigger: 'blur' }]
+    type: [{ required: true, message: '请选择交易类型', trigger: 'blur' }]
   }
 
   /**
@@ -97,14 +97,13 @@
    * 根据对话框类型（新增/编辑）填充表单
    */
   const initFormData = () => {
-    const isEdit = props.type === 'edit' && props.userData
-    const row = props.userData
+    const isEdit = props.type === 'edit' && props.transData
+    const row = props.transData
 
     Object.assign(formData, {
-      username: isEdit && row ? row.userName || '' : '',
-      phone: isEdit && row ? row.userPhone || '' : '',
-      gender: isEdit && row ? row.userGender || '男' : '男',
-      role: isEdit && row ? (Array.isArray(row.userRoles) ? row.userRoles : []) : []
+      title: isEdit && row ? row.title || '' : '',
+      amount: isEdit && row ? row.amount || '' : '',
+      type: isEdit && row ? row.type || '' : ''
     })
   }
 
@@ -113,7 +112,7 @@
    * 当对话框打开时初始化表单数据并清除验证状态
    */
   watch(
-    () => [props.visible, props.type, props.userData],
+    () => [props.visible, props.type, props.transData],
     ([visible]) => {
       if (visible) {
         initFormData()
