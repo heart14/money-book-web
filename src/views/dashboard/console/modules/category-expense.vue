@@ -18,7 +18,7 @@
         <ElTableColumn prop="count" label="支出频次">
           <template #default="scope">
             <ElProgress
-              :percentage="scope.row.count"
+              :percentage="Math.min(Math.max(scope.row.count, 0), 100)"
               :color="getColor(scope.row.count)"
               :stroke-width="8"
               :show-text="false"
