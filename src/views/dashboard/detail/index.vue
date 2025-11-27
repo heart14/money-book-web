@@ -6,7 +6,7 @@
 <template>
   <div class="user-page art-full-height">
     <!-- 搜索栏 -->
-    <UserSearch v-model="searchForm" @search="handleSearch" @reset="resetSearchParams"></UserSearch>
+    <TransSearch v-model="searchForm" @search="handleSearch" @reset="resetSearchParams" />
 
     <ElCard class="art-table-card" shadow="never">
       <!-- 表格头部 -->
@@ -31,7 +31,7 @@
       </ArtTable>
 
       <!-- 用户弹窗 -->
-      <UserDialog
+      <TransDialog
         v-model:visible="dialogVisible"
         :type="dialogType"
         :user-data="currentTransData"
@@ -45,8 +45,8 @@
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
   import { useTable } from '@/hooks/core/useTable'
   import { fetchTransDetailList } from '@/api/dashboard'
-  import UserSearch from './modules/user-search.vue'
-  import UserDialog from './modules/user-dialog.vue'
+  import TransSearch from './modules/trans-search.vue'
+  import TransDialog from './modules/trans-dialog.vue'
   import { ElTag, ElMessageBox } from 'element-plus'
   import { DialogType } from '@/types'
 
