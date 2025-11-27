@@ -223,7 +223,8 @@
     },
     "dashboard": {
       "title": "仪表盘",
-      "console": "工作台"
+      "console": "工作台",
+      "detail": "交易明细"
     },
     "result": {
       "title": "结果页面",

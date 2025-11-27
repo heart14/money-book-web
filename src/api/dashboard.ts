@@ -1,5 +1,7 @@
 import request from '@/utils/http'
 
+//---------------工作台页面----------------//
+
 /**
  * 获取统计卡片数据
  * @returns 统计卡片信息
@@ -57,5 +59,17 @@ export function fetchCategoryExpense() {
 export function fetchLargeConsume() {
   return request.get<Api.Dashboard.LargeConsumeItem>({
     url: '/dashboard/largeConsume'
+  })
+}
+
+//---------------交易详情页面----------------//
+
+/**
+ * 分页查询交易明细
+ */
+export function fetchTransDetailList(params: Api.TransDetail.TransDetailPageParam) {
+  return request.get<Api.TransDetail.TransDetailPageParam>({
+    url: '/dashboard/transDetailList',
+    params
   })
 }

@@ -19,6 +19,16 @@ export const dashboardRoutes: AppRouteRecord = {
         keepAlive: false,
         fixedTab: true
       }
+    },
+    {
+      path: 'detail',
+      name: 'Detail',
+      component: '/dashboard/detail',
+      meta: {
+        title: 'menus.dashboard.detail',
+        keepAlive: false,
+        fixedTab: true
+      }
     }
   ]
 }

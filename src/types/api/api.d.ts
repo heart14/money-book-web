@@ -88,6 +88,9 @@ declare namespace Api {
 
   /** Dashboard页面 */
   namespace Dashboard {
+    //------后台请求参数------//
+
+    //------后台响应参数------//
     interface CardDataItem {
       des: string
       num: number
@@ -119,6 +122,34 @@ declare namespace Api {
       date: string
       title: string
       amount: string
+    }
+  }
+
+  namespace TransDetail {
+    //------后台请求参数------//
+    interface TransDetailPageParam {
+      current: number
+      size: number
+      date: string
+      title: string
+      categoryId: number
+      type: string
+      dateRangeStart: string
+      dateRangeEnd: string
+    }
+    //------后台响应参数------//
+    interface TransDetailItem {
+      id: number
+      title: string
+      amount: number
+      type: number
+      cid: number
+      categoryName: string
+      categoryPath: string
+      username: string
+      remark: string
+      transTime: string
+      recordTime: string
     }
   }
 
