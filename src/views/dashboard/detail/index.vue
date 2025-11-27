@@ -150,7 +150,7 @@
               }),
               h(ArtButtonTable, {
                 type: 'delete',
-                onClick: () => deleteUser(row)
+                onClick: () => deleteTransItem(row)
               })
             ])
         }
@@ -187,16 +187,16 @@
   }
 
   /**
-   * 删除用户
+   * 删除交易明细数据
    */
-  const deleteUser = (row: TransDetailItem): void => {
-    console.log('删除用户:', row)
-    ElMessageBox.confirm(`确定要注销该用户吗？`, '注销用户', {
+  const deleteTransItem = (row: TransDetailItem): void => {
+    console.log('删除交易明细数据:', row)
+    ElMessageBox.confirm(`确定要删除该记录？`, '删除交易明细', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'error'
     }).then(() => {
-      ElMessage.success('注销成功')
+      ElMessage.success('删除成功')
     })
   }
 
