@@ -49,7 +49,7 @@
 
   // 获取分类数据
   const loadCategoryOptions = async () => {
-    const res = await fetchCategoryList({ type: formData.value.type })
+    const res = await fetchCategoryList({ type: formData.value.type, level: 2 })
     categoryOptions.value = res.map((i) => ({ label: i.name, value: i.id }))
   }
 

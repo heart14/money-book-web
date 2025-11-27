@@ -64,7 +64,7 @@
   const loadCategoryOptions = async () => {
     categoryLoading.value = true
     try {
-      const res = await fetchCategoryList({ type: formData.type })
+      const res = await fetchCategoryList({ type: formData.type, level: 2 })
       categoryOptions.value = res.map((i: any) => ({ label: i.name, value: i.id }))
       // 如果当前 cid 不在新列表里，自动清空
       if (!categoryOptions.value.some((i) => i.value === formData.cid)) {
