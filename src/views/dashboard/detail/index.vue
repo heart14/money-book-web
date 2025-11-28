@@ -196,7 +196,7 @@
       cancelButtonText: '取消',
       type: 'error'
     }).then(() => {
-      ElMessage.success('删除成功')
+      ElMessage.error('不允许删除记录')
     })
   }
 

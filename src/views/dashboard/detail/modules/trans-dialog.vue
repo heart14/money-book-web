@@ -7,10 +7,10 @@
   >
     <ElForm ref="formRef" :model="formData" :rules="rules" label-width="80px">
       <ElFormItem label="标题" prop="title">
-        <ElInput v-model="formData.title" placeholder="请输入标题" />
+        <ElInput v-model="formData.title" placeholder="标题" />
       </ElFormItem>
       <ElFormItem label="金额" prop="amount">
-        <ElInput v-model="formData.amount" placeholder="请输入金额" />
+        <ElInput v-model="formData.amount" placeholder="金额" />
       </ElFormItem>
       <ElFormItem label="类型" prop="type">
         <ElSelect v-model="formData.type">
@@ -28,6 +28,29 @@
             :value="item.value"
           />
         </ElSelect>
+      </ElFormItem>
+      <ElFormItem label="备注" prop="remark">
+        <ElInput v-model="formData.remark" placeholder="交易备注" />
+      </ElFormItem>
+      <ElFormItem label="交易时间" prop="transTime" required>
+        <ElDatePicker
+          style="width: 100%"
+          v-model="formData.transTime"
+          type="datetime"
+          placeholder="选择日期"
+          format="YYYY-MM-DD HH:mm:ss"
+          value-format="YYYY-MM-DD HH:mm:ss"
+        />
+      </ElFormItem>
+      <ElFormItem label="记录时间" prop="recordTime" required>
+        <ElDatePicker
+          style="width: 100%"
+          v-model="formData.recordTime"
+          type="datetime"
+          placeholder="选择日期"
+          format="YYYY-MM-DD HH:mm:ss"
+          value-format="YYYY-MM-DD HH:mm:ss"
+        />
       </ElFormItem>
     </ElForm>
     <template #footer>
@@ -91,7 +114,10 @@
     title: '',
     amount: 0,
     type: 2,
-    cid: undefined as number | undefined
+    cid: undefined as number | undefined,
+    remark: '',
+    transTime: '',
+    recordTime: ''
   })
 
   // 表单验证规则
@@ -123,7 +149,10 @@
       title: isEdit && row ? row.title || '' : '',
       amount: isEdit && row ? row.amount || '' : '',
       type: isEdit && row ? row.type || '' : '',
-      cid: isEdit && row ? row.cid || '' : ''
+      cid: isEdit && row ? row.cid || '' : '',
+      remark: isEdit && row ? row.remark || '' : '',
+      transTime: isEdit && row ? row.transTime || '' : '',
+      recordTime: isEdit && row ? row.recordTime || '' : ''
     })
   }
 
