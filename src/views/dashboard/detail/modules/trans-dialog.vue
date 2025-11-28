@@ -10,7 +10,7 @@
         <ElInput v-model="formData.title" placeholder="标题" />
       </ElFormItem>
       <ElFormItem label="金额" prop="amount">
-        <ElInput v-model="formData.amount" placeholder="金额" />
+        <ElInput v-model="formData.amount" placeholder="金额" :disabled="true" />
       </ElFormItem>
       <ElFormItem label="类型" prop="type">
         <ElSelect v-model="formData.type">
