@@ -75,6 +75,16 @@ export function fetchTransDetailList(params: Api.TransDetail.TransDetailPagePara
 }
 
 /**
+ * 提交交易明细
+ */
+export function postTransDetail(params: Api.TransDetail.TransDetailItem) {
+  return request.post({
+    url: '/dashboard/transDetail',
+    params
+  })
+}
+
+/**
  * 查询交易分类列表
  */
 export function fetchCategoryList(params?: Api.Category.CategoryParam) {

@@ -10,7 +10,7 @@
         <ElInput v-model="formData.title" placeholder="标题" />
       </ElFormItem>
       <ElFormItem label="金额" prop="amount">
-        <ElInput v-model="formData.amount" placeholder="金额" :disabled="true" />
+        <ElInput v-model="formData.amount" placeholder="金额" :disabled="dialogType === 'edit'" />
       </ElFormItem>
       <ElFormItem label="类型" prop="type">
         <ElSelect v-model="formData.type">
@@ -21,6 +21,7 @@
       </ElFormItem>
       <ElFormItem label="分类" prop="cid">
         <ElSelect v-model="formData.cid" :loading="categoryLoading" :disabled="!formData.type">
+          <ElOption label="请选择分类" :value="0"></ElOption>
           <ElOption
             v-for="item in categoryOptions"
             :key="item.value"
@@ -64,7 +65,7 @@
 
 <script setup lang="ts">
   import { ref } from 'vue'
-  import { fetchCategoryList } from '@/api/dashboard'
+  import { fetchCategoryList, postTransDetail } from '@/api/dashboard'
   import type { FormInstance, FormRules } from 'element-plus'
 
   interface Props {
@@ -91,7 +92,7 @@
       categoryOptions.value = res.map((i: any) => ({ label: i.name, value: i.id }))
       // 如果当前 cid 不在新列表里，自动清空
       if (!categoryOptions.value.some((i) => i.value === formData.cid)) {
-        formData.cid = undefined
+        formData.cid = 0
       }
     } finally {
       categoryLoading.value = false
@@ -111,10 +112,14 @@
 
   // 表单数据
   const formData = reactive({
+    id: 0,
     title: '',
     amount: 0,
     type: 2,
-    cid: undefined as number | undefined,
+    cid: 0,
+    categoryName: '',
+    categoryPath: '',
+    username: '',
     remark: '',
     transTime: '',
     recordTime: ''
@@ -131,7 +136,10 @@
       { pattern: /^-?\d+(\.\d{1,2})?$/, message: '金额格式错误，最多两位小数', trigger: 'blur' }
     ],
     type: [{ required: true, message: '请选择交易类型', trigger: 'blur' }],
-    cid: [{ required: true, message: '请选择分类', trigger: 'change' }]
+    cid: [
+      { required: true, message: '请选择分类', trigger: 'change' },
+      { validator: (_, val: number) => val > 0, message: '请选择有效分类', trigger: 'change' }
+    ]
   }
 
   /**
@@ -142,18 +150,28 @@
     const isEdit = props.type === 'edit' && props.transData
     const row = props.transData
 
-    // 2. 立刻把对应分类拉回来（保证 options 里包含这条数据）
-    await loadCategoryOptions()
-
     Object.assign(formData, {
+      id: isEdit && row ? row.id || '' : '',
       title: isEdit && row ? row.title || '' : '',
       amount: isEdit && row ? row.amount || '' : '',
       type: isEdit && row ? row.type || '' : '',
       cid: isEdit && row ? row.cid || '' : '',
       remark: isEdit && row ? row.remark || '' : '',
-      transTime: isEdit && row ? row.transTime || '' : '',
-      recordTime: isEdit && row ? row.recordTime || '' : ''
+      transTime: isEdit && row ? row.transTime || '' : now(),
+      recordTime: isEdit && row ? row.recordTime || '' : now()
     })
+  }
+
+  /** 返回当前时间的 YYYY-MM-DD HH:mm:ss */
+  const now = () => {
+    const d = new Date()
+    const Y = d.getFullYear()
+    const M = String(d.getMonth() + 1).padStart(2, '0')
+    const D = String(d.getDate()).padStart(2, '0')
+    const h = String(d.getHours()).padStart(2, '0')
+    const m = String(d.getMinutes()).padStart(2, '0')
+    const s = String(d.getSeconds()).padStart(2, '0')
+    return `${Y}-${M}-${D} ${h}:${m}:${s}`
   }
 
   /**
@@ -176,7 +194,7 @@
   watch(
     () => formData.type,
     () => {
-      formData.cid = undefined // 先清空已选分类
+      formData.cid = 0 // 先清空已选分类
       loadCategoryOptions()
     },
     { immediate: true } // immediate 保证打开弹窗就拉一次
@@ -191,6 +209,8 @@
 
     await formRef.value.validate((valid) => {
       if (valid) {
+        const res = postTransDetail(formData)
+        console.log(res)
         ElMessage.success(dialogType.value === 'add' ? '添加成功' : '更新成功')
         dialogVisible.value = false
         emit('submit')

@@ -35,7 +35,7 @@
         v-model:visible="dialogVisible"
         :type="dialogType"
         :trans-data="currentTransData"
-        @submit="handleDialogSubmit"
+        @submit="refreshData"
       />
     </ElCard>
   </div>
@@ -203,14 +203,14 @@
   /**
    * 处理弹窗提交事件
    */
-  const handleDialogSubmit = async () => {
-    try {
-      dialogVisible.value = false
-      currentTransData.value = {}
-    } catch (error) {
-      console.error('提交失败:', error)
-    }
-  }
+  // const handleDialogSubmit = async () => {
+  //   try {
+  //     dialogVisible.value = false
+  //     currentTransData.value = {}
+  //   } catch (error) {
+  //     console.error('提交失败:', error)
+  //   }
+  // }
 
   /**
    * 处理表格行选择变化
