@@ -29,6 +29,26 @@ export const dashboardRoutes: AppRouteRecord = {
         keepAlive: false,
         fixedTab: true
       }
+    },
+    {
+      path: 'tabulate',
+      name: 'Tabulate',
+      component: '/dashboard/tabulate',
+      meta: {
+        title: 'menus.dashboard.tabulate',
+        keepAlive: false,
+        fixedTab: true
+      }
+    },
+    {
+      path: 'calendar',
+      name: 'Calendar',
+      component: '/dashboard/calendar',
+      meta: {
+        title: 'menus.dashboard.calendar',
+        keepAlive: false,
+        fixedTab: true
+      }
     }
   ]
 }
