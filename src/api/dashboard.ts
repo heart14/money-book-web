@@ -85,6 +85,15 @@ export function postTransDetail(params: Api.TransDetail.TransDetailItem) {
 }
 
 /**
+ * 查询按月按分类数据汇总
+ */
+export function fetchTabulateList() {
+  return request.get<Api.Tabulate.TabulateItem>({
+    url: '/dashboard/tabulateList'
+  })
+}
+
+/**
  * 查询交易分类列表
  */
 export function fetchCategoryList(params?: Api.Category.CategoryParam) {

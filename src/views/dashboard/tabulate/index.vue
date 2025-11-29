@@ -2,6 +2,10 @@
 <template>
   <div class="user-page art-full-height">
     <ElCard class="art-table-card" shadow="never" style="margin-top: 0">
+      <!-- 标题 -->
+      <template #header>
+        <div class="table-title">月/分类支出统计表（单位：元）</div>
+      </template>
       <!-- 表格 -->
       <ArtTable
         rowKey="id"
@@ -9,10 +13,11 @@
         :loading="loading"
         :data="data"
         :columns="columns"
-        :pagination="pagination"
-        @pagination:size-change="handleSizeChange"
-        @pagination:current-change="handleCurrentChange"
+        :row-style="rowStyle"
       >
+        <template #total="{ row }">
+          <span :style="{ color: '#f56c6c', fontWeight: 'bold' }">{{ row.total }}</span>
+        </template>
       </ArtTable>
     </ElCard>
   </div>
@@ -20,44 +25,82 @@
 
 <script setup lang="ts">
   import { useTable } from '@/hooks/core/useTable'
-  import { fetchGetUserList } from '@/api/system-manage'
+  import { fetchTabulateList } from '@/api/dashboard'
 
-  defineOptions({ name: 'UserMixedUsageExample' })
-
-  const { data, columns, loading, pagination, handleSizeChange, handleCurrentChange } = useTable({
+  const { data, columns, loading } = useTable({
     core: {
-      apiFn: fetchGetUserList,
-      apiParams: {
-        current: 1,
-        size: 20,
-        userName: '',
-        userPhone: '',
-        userEmail: ''
-      },
+      apiFn: fetchTabulateList,
+      apiParams: {},
       columnsFactory: () => [
         {
-          prop: 'id',
-          label: 'ID'
+          prop: 'categoryName',
+          label: '分类'
         },
         {
-          prop: 'nickName',
-          label: '昵称'
+          prop: 'month1',
+          label: '1月'
         },
         {
-          prop: 'userGender',
-          label: '性别',
+          prop: 'month2',
+          label: '2月'
+        },
+        {
+          prop: 'month3',
+          label: '3月'
+        },
+        {
+          prop: 'month4',
+          label: '4月'
+        },
+        {
+          prop: 'month5',
+          label: '5月'
+        },
+        {
+          prop: 'month6',
+          label: '6月'
+        },
+        {
+          prop: 'month7',
+          label: '7月'
+        },
+        {
+          prop: 'month8',
+          label: '8月'
+        },
+        {
+          prop: 'month9',
+          label: '9月'
+        },
+        {
+          prop: 'month10',
+          label: '10月'
+        },
+        {
+          prop: 'month11',
+          label: '11月'
+        },
+        {
+          prop: 'month12',
+          label: '12月'
+        },
+        {
+          prop: 'total',
           sortable: true,
-          formatter: (row) => row.userGender || '未知'
-        },
-        {
-          prop: 'userPhone',
-          label: '手机号'
-        },
-        {
-          prop: 'userEmail',
-          label: '邮箱'
+          label: '总计',
+          useSlot: true
         }
       ]
     }
   })
+
+  const rowStyle = ({ row }: any) =>
+    row.categoryName === '合计' ? { color: '#f56c6c', fontWeight: 'bold' } : {}
 </script>
+<style scoped>
+  .table-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--el-text-color-primary);
+  }
+</style>
