@@ -16,7 +16,7 @@
         :row-style="rowStyle"
       >
         <template #total="{ row }">
-          <span :style="{ color: '#f56c6c', fontWeight: 'bold' }">{{ row.total }}</span>
+          <span :style="{ color: '#f56c6c', fontWeight: 'bold' }">￥{{ row.total }}</span>
         </template>
       </ArtTable>
     </ElCard>
@@ -86,6 +86,7 @@
         },
         {
           prop: 'total',
+          width: 120,
           sortable: true,
           label: '总计',
           useSlot: true
