@@ -189,6 +189,14 @@ declare namespace Api {
     }
   }
 
+  namespace CalendarEvent {
+    interface CalendarEventItem {
+      date: string
+      content: string
+      type: string
+    }
+  }
+
   /** 系统管理类型 */
   namespace SystemManage {
     /** 用户列表 */

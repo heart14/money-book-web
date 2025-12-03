@@ -1,7 +1,7 @@
 <template>
   <div class="page-content mb-5">
     <!-- 日历主体 -->
-    <ElCalendar v-model="currentDate">
+    <ElCalendar v-model="currentDate" v-loading="loading">
       <template #date-cell="{ data }">
         <div
           class="relative flex flex-col h-full min-h-30 max-h-30 p-1 overflow-hidden c-p"
@@ -78,7 +78,15 @@
 </template>
 
 <script setup lang="ts">
-  defineOptions({ name: 'TemplateCalendar' })
+  import { ref } from 'vue'
+  import { fetchEventList } from '@/api/dashboard'
+
+  const loading = ref(false)
+  const error = ref('')
+  /**
+   * 后端接口返回的数据结构
+   */
+  const eventData = ref<Api.CalendarEvent.CalendarEventItem[]>([])
 
   /**
    * 日历事件类型定义
@@ -87,7 +95,7 @@
     date: string
     endDate?: string
     content: string
-    type?: 'primary' | 'success' | 'warning' | 'danger'
+    type?: 'info' | 'primary' | 'success' | 'warning' | 'danger'
     bgClass?: string
     textClass?: string
   }
@@ -96,13 +104,14 @@
    * 事件类型选项
    */
   const eventTypes = [
+    { label: 'Tag', value: 'info' },
     { label: '基本', value: 'primary' },
     { label: '成功', value: 'success' },
     { label: '警告', value: 'warning' },
     { label: '危险', value: 'danger' }
   ] as const
 
-  const currentDate = ref(new Date('2025-02-07'))
+  const currentDate = ref(new Date())
   const dialogVisible = ref(false)
   const dialogTitle = ref('添加事件')
   const editingEventIndex = ref<number>(-1)
@@ -110,22 +119,26 @@
   /**
    * 事件列表数据
    */
-  const events = ref<CalendarEvent[]>([
-    { date: '2025-02-01', content: '产品需求评审', type: 'primary' },
-    {
-      date: '2025-02-03',
-      endDate: '2025-02-05',
-      content: '项目周报会议（跨日期）',
-      type: 'primary'
-    },
-    { date: '2025-02-10', content: '瑜伽课程', type: 'success' },
-    { date: '2025-02-15', content: '团队建设活动', type: 'primary' },
-    { date: '2025-02-20', content: '健身训练', type: 'success' },
-    { date: '2025-02-20', content: '代码评审', type: 'danger' },
-    { date: '2025-02-20', content: '团队午餐', type: 'primary' },
-    { date: '2025-02-20', content: '项目进度汇报', type: 'warning' },
-    { date: '2025-02-28', content: '月度总结会', type: 'warning' }
-  ])
+  const events = ref<CalendarEvent[]>([])
+
+  const loadEventData = async (ym: string) => {
+    loading.value = true
+    error.value = ''
+    try {
+      const res = await fetchEventList({ yearMonth: ym })
+      eventData.value = (res as any).data ?? res
+      // 将后端返回数据映射到前端所需要的数据结构
+      events.value = eventData.value.map((it: any) => ({
+        date: it.date,
+        content: it.content,
+        type: it.type || 'info'
+      }))
+    } catch (e: any) {
+      error.value = e?.message || '网络错误'
+    } finally {
+      loading.value = false
+    }
+  }
 
   /**
    * 事件表单数据
@@ -156,6 +169,7 @@
    */
   const getEventClasses = (type: CalendarEvent['type'] = 'primary') => {
     const classMap = {
+      info: { bgClass: 'bg-info/12', textClass: 'text-info' },
       primary: { bgClass: 'bg-theme/12', textClass: 'text-theme' },
       success: { bgClass: 'bg-success/12', textClass: 'text-success' },
       warning: { bgClass: 'bg-warning/12', textClass: 'text-warning' },
@@ -255,6 +269,15 @@
       resetForm()
     }
   }
+
+  watch(
+    currentDate,
+    (newVal) => {
+      const ym = `${newVal.getFullYear()}-${String(newVal.getMonth() + 1).padStart(2, '0')}`
+      loadEventData(ym)
+    },
+    { immediate: true } // 组件一挂载就跑一次
+  )
 </script>
 
 <style scoped>

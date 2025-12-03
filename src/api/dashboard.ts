@@ -85,6 +85,18 @@ export function postTransDetail(params: Api.TransDetail.TransDetailItem) {
 }
 
 /**
+ * 查询交易分类列表
+ */
+export function fetchCategoryList(params?: Api.Category.CategoryParam) {
+  return request.get<Api.Category.CategoryItem[]>({
+    url: '/category/list',
+    params
+  })
+}
+
+//---------------统计数据页面----------------//
+
+/**
  * 查询按月按分类数据汇总
  */
 export function fetchTabulateList() {
@@ -93,12 +105,14 @@ export function fetchTabulateList() {
   })
 }
 
+//---------------日历页面----------------//
+
 /**
- * 查询交易分类列表
+ * 查询日历event数据
  */
-export function fetchCategoryList(params?: Api.Category.CategoryParam) {
-  return request.get<Api.Category.CategoryItem[]>({
-    url: '/category/list',
+export function fetchEventList(params: { yearMonth: string }) {
+  return request.get<Api.CalendarEvent.CalendarEventItem>({
+    url: '/dashboard/eventList',
     params
   })
 }
