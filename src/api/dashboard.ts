@@ -121,8 +121,8 @@ export function fetchEventList(params: { yearMonth: string }) {
  * 查询日历event数据
  */
 export function fetchDiaryList(params: { yearMonth: string }) {
-  return request.get<Api.CalendarEvent.CalendarEventItem>({
-    url: '/dashboard/eventList',
+  return request.get<Api.CalendarEvent.CalendarDiaryItem>({
+    url: '/dashboard/diaryList',
     params
   })
 }

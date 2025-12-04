@@ -194,7 +194,11 @@ declare namespace Api {
       date: string
       endDate: string
       content: string
-      type: string
+    }
+    interface CalendarDiaryItem {
+      date: string
+      workShift: string
+      diaryContent: string
     }
   }
 

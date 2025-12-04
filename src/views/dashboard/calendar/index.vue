@@ -196,11 +196,13 @@
    */
   const formatDate = (date: string) => date.split('-')[2]
 
-  /** 班次 -> 颜色类名 */
+  /**
+   * 班次 -> 颜色类名
+   */
   const shiftColorMap = {
-    EARLY: { bgClass: 'bg-theme/12', textClass: 'text-theme' },
-    DAY: { bgClass: 'bg-success/12', textClass: 'text-success' },
-    NIGHT: { bgClass: 'bg-warning/12', textClass: 'text-warning' },
+    EARLY: { bgClass: 'bg-success/12', textClass: 'text-success' },
+    DAY: { bgClass: 'bg-warning/12', textClass: 'text-warning' },
+    NIGHT: { bgClass: 'bg-theme/12', textClass: 'text-theme' },
     REST: { bgClass: 'bg-info/12', textClass: 'text-info' }
   } as const
 
