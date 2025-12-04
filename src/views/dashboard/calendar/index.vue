@@ -8,6 +8,7 @@
           :class="{ 'is-selected': data.isSelected }"
           @click="handleCellClick(data.day)"
         >
+          <ArtSvgIcon icon="ri:draft-line" />
           <!-- 日期显示 -->
           <p class="absolute top-1 right-1 text-sm">{{ formatDate(data.day) }}</p>
 
@@ -130,6 +131,7 @@
       // 将后端返回数据映射到前端所需要的数据结构
       events.value = eventData.value.map((it: any) => ({
         date: it.date,
+        endDate: it.endDate,
         content: it.content,
         type: it.type || 'info'
       }))

@@ -192,6 +192,7 @@ declare namespace Api {
   namespace CalendarEvent {
     interface CalendarEventItem {
       date: string
+      endDate: string
       content: string
       type: string
     }
