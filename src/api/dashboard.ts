@@ -118,7 +118,22 @@ export function fetchEventList(params: { yearMonth: string }) {
 }
 
 /**
- * 查询日历event数据
+ * 编辑或新增日历event数据
+ */
+export function postEventTag(params: {
+  id?: number
+  date: string
+  endDate?: string
+  content: string
+}) {
+  return request.post({
+    url: '/dashboard/event',
+    params
+  })
+}
+
+/**
+ * 查询日历diary数据
  */
 export function fetchDiaryList(params: { yearMonth: string }) {
   return request.get<Api.CalendarEvent.CalendarDiaryItem>({

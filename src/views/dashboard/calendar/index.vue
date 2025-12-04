@@ -50,8 +50,8 @@
     <!-- 事件编辑弹窗 -->
     <ElDialog v-model="dialogVisible" :title="dialogTitle" width="600px" @closed="resetForm">
       <ElForm :model="eventForm" label-width="80px">
-        <ElFormItem label="活动标题" required>
-          <ElInput v-model="eventForm.content" placeholder="请输入活动标题" />
+        <ElFormItem label="Tag" required>
+          <ElInput v-model="eventForm.content" placeholder="请输入事件tag" />
         </ElFormItem>
         <ElFormItem label="开始日期" required>
           <ElDatePicker
@@ -116,7 +116,7 @@
 
 <script setup lang="ts">
   import { ref } from 'vue'
-  import { fetchEventList, fetchDiaryList } from '@/api/dashboard'
+  import { fetchEventList, postEventTag, fetchDiaryList } from '@/api/dashboard'
 
   const loading = ref(false)
   const error = ref('')
@@ -129,6 +129,7 @@
    * 日历事件类型定义
    */
   interface CalendarEvent {
+    id: number
     date: string
     endDate?: string
     content: string
@@ -164,6 +165,7 @@
       eventData.value = (res as any).data ?? res
       // 将后端返回数据映射到前端所需要的数据结构
       events.value = eventData.value.map((it: any) => ({
+        id: it.id,
         date: it.date,
         endDate: it.endDate,
         content: it.content
@@ -179,6 +181,7 @@
    * 事件表单数据
    */
   const eventForm = ref<CalendarEvent>({
+    id: 0,
     date: '',
     endDate: '',
     content: ''
@@ -243,6 +246,7 @@
    */
   const resetForm = () => {
     eventForm.value = {
+      id: 0,
       date: '',
       endDate: '',
       content: ''
@@ -258,6 +262,7 @@
   const handleCellClick = (day: string) => {
     dialogTitle.value = '添加事件'
     eventForm.value = {
+      id: 0,
       date: day,
       content: ''
     }
@@ -283,17 +288,27 @@
    * 保存事件
    * 根据编辑模式决定是新增还是更新
    */
-  const handleSaveEvent = () => {
+  const handleSaveEvent = async () => {
     if (!eventForm.value.content || !eventForm.value.date) return
 
-    if (isEditing.value) {
-      events.value[editingEventIndex.value] = { ...eventForm.value }
-    } else {
-      events.value.push({ ...eventForm.value })
+    const payload = {
+      id: isEditing.value ? eventForm.value.id : undefined, // 新增不传 id
+      date: eventForm.value.date,
+      endDate: eventForm.value.endDate || undefined,
+      content: eventForm.value.content.trim()
     }
 
-    dialogVisible.value = false
-    resetForm()
+    try {
+      await postEventTag(payload)
+      // 保存成功后刷新当月数据
+      await loadEventData(
+        `${currentDate.value.getFullYear()}-${String(currentDate.value.getMonth() + 1).padStart(2, '0')}`
+      )
+      dialogVisible.value = false
+      resetForm()
+    } catch (e: any) {
+      ElMessage.error(e?.message || '保存失败')
+    }
   }
 
   /**
@@ -325,7 +340,6 @@
   }
 
   const handleSaveDiary = async () => {
-    // 这里调用你后台的保存接口，例如 saveDiary(diaryForm.value)
     // 保存成功后刷新当月数据
     await loadDiaryData(
       `${currentDate.value.getFullYear()}-${String(currentDate.value.getMonth() + 1).padStart(2, '0')}`
