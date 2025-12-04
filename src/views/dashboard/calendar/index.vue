@@ -3,16 +3,32 @@
     <!-- 日历主体 -->
     <ElCalendar v-model="currentDate" v-loading="loading">
       <template #date-cell="{ data }">
+        <!-- 根节点加上点击事件，但事件块自己 stop 阻止冒泡 -->
         <div
           class="relative flex flex-col h-full min-h-30 max-h-30 p-1 overflow-hidden c-p"
           :class="{ 'is-selected': data.isSelected }"
           @click="handleCellClick(data.day)"
         >
-          <ArtSvgIcon icon="ri:draft-line" />
-          <!-- 日期显示 -->
+          <!-- 草稿图标：仅弹出日记窗，不再冒泡到新增事件 -->
+          <div
+            @click.stop="handleDiaryClick(data.day)"
+            class="c-p px-1 py-0.5 rounded"
+            :class="
+              diaryMap[data.day]?.workShift
+                ? [
+                    getEventClasses(diaryMap[data.day].workShift as any).bgClass,
+                    getEventClasses(diaryMap[data.day].workShift as any).textClass
+                  ]
+                : []
+            "
+          >
+            <ArtSvgIcon icon="ri:heart-2-line" />
+          </div>
+
+          <!-- 日期 -->
           <p class="absolute top-1 right-1 text-sm">{{ formatDate(data.day) }}</p>
 
-          <!-- 事件列表 -->
+          <!-- 事件列表：点击自己 stop，避免冒泡到根节点触发新增 -->
           <div class="flex flex-col gap-1 w-full max-h-21 pr-1 mt-6 overflow-y-auto">
             <div
               v-for="event in getEvents(data.day)"
@@ -36,13 +52,6 @@
       <ElForm :model="eventForm" label-width="80px">
         <ElFormItem label="活动标题" required>
           <ElInput v-model="eventForm.content" placeholder="请输入活动标题" />
-        </ElFormItem>
-        <ElFormItem label="事件颜色">
-          <ElRadioGroup v-model="eventForm.type">
-            <ElRadio v-for="type in eventTypes" :key="type.value" :value="type.value">
-              {{ type.label }}
-            </ElRadio>
-          </ElRadioGroup>
         </ElFormItem>
         <ElFormItem label="开始日期" required>
           <ElDatePicker
@@ -75,12 +84,39 @@
         </span>
       </template>
     </ElDialog>
+
+    <!-- 日记编辑弹窗 -->
+    <ElDialog v-model="diaryDialog" title="日记" width="600px" @closed="diaryDialog = false">
+      <ElForm :model="diaryForm" label-width="80px">
+        <ElFormItem label="日期">
+          <ElInput v-model="diaryForm.date" disabled />
+        </ElFormItem>
+        <ElFormItem label="班次">
+          <ElRadioGroup v-model="diaryForm.workShift">
+            <ElRadio v-for="type in workShiftTypes" :key="type.value" :value="type.value">
+              {{ type.label }}
+            </ElRadio>
+          </ElRadioGroup>
+        </ElFormItem>
+        <ElFormItem label="内容">
+          <ElInput
+            v-model="diaryForm.diaryContent"
+            type="textarea"
+            :rows="6"
+            placeholder="请输入日记内容"
+          />
+        </ElFormItem>
+      </ElForm>
+      <template #footer>
+        <ElButton type="primary" @click="handleSaveDiary">保存</ElButton>
+      </template>
+    </ElDialog>
   </div>
 </template>
 
 <script setup lang="ts">
   import { ref } from 'vue'
-  import { fetchEventList } from '@/api/dashboard'
+  import { fetchEventList, fetchDiaryList } from '@/api/dashboard'
 
   const loading = ref(false)
   const error = ref('')
@@ -104,12 +140,11 @@
   /**
    * 事件类型选项
    */
-  const eventTypes = [
-    { label: 'Tag', value: 'info' },
-    { label: '基本', value: 'primary' },
-    { label: '成功', value: 'success' },
-    { label: '警告', value: 'warning' },
-    { label: '危险', value: 'danger' }
+  const workShiftTypes = [
+    { label: '早班', value: 'primary' },
+    { label: '白班', value: 'success' },
+    { label: '晚班', value: 'warning' },
+    { label: '休息', value: 'info' }
   ] as const
 
   const currentDate = ref(new Date())
@@ -272,13 +307,60 @@
     }
   }
 
+  const diaryMap = ref<Record<string, { diaryContent: string; workShift: string }>>({})
+  /* 日记弹窗 */
+  const diaryDialog = ref(false)
+  const diaryForm = ref({
+    date: '',
+    diaryContent: '',
+    workShift: ''
+  })
+
+  const handleDiaryClick = (day: string) => {
+    diaryForm.value.date = day
+    const hit = diaryMap.value[day]
+    diaryForm.value.diaryContent = hit?.diaryContent ?? ''
+    diaryForm.value.workShift = hit?.workShift ?? ''
+    diaryDialog.value = true
+  }
+
+  const handleSaveDiary = async () => {
+    // 这里调用你后台的保存接口，例如 saveDiary(diaryForm.value)
+    // 保存成功后刷新当月数据
+    await loadDiaryData(
+      `${currentDate.value.getFullYear()}-${String(currentDate.value.getMonth() + 1).padStart(2, '0')}`
+    )
+    diaryDialog.value = false
+  }
+
+  const loadDiaryData = async (ym: string) => {
+    const res = await fetchDiaryList({ yearMonth: ym })
+    const list = (res as any).data ?? res
+    diaryMap.value = {}
+    list.forEach((it: any) => {
+      diaryMap.value[it.date] = { diaryContent: it.diaryContent, workShift: it.workShift }
+    })
+  }
+
+  const loadAllData = async (ym: string) => {
+    loading.value = true
+    error.value = ''
+    try {
+      await Promise.all([loadEventData(ym), loadDiaryData(ym)])
+    } catch (e: any) {
+      error.value = e?.message || '网络错误'
+    } finally {
+      loading.value = false
+    }
+  }
+
   watch(
     currentDate,
     (newVal) => {
       const ym = `${newVal.getFullYear()}-${String(newVal.getMonth() + 1).padStart(2, '0')}`
-      loadEventData(ym)
+      loadAllData(ym)
     },
-    { immediate: true } // 组件一挂载就跑一次
+    { immediate: true }
   )
 </script>
 
