@@ -200,10 +200,10 @@
    * 班次 -> 颜色类名
    */
   const shiftColorMap = {
-    EARLY: { bgClass: 'bg-success/9', textClass: 'text-success' },
-    DAY: { bgClass: 'bg-primary/9', textClass: 'text-primary' },
-    NIGHT: { bgClass: 'bg-warning/9', textClass: 'text-warning' },
-    REST: { bgClass: 'bg-info/9', textClass: 'text-info' }
+    EARLY: { bgClass: 'bg-success/3', textClass: 'text-success' },
+    DAY: { bgClass: 'bg-primary/3', textClass: 'text-primary' },
+    NIGHT: { bgClass: 'bg-warning/3', textClass: 'text-warning' },
+    REST: { bgClass: 'bg-info/3', textClass: 'text-info' }
   } as const
 
   /**
