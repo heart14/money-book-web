@@ -38,50 +38,62 @@
         },
         {
           prop: 'month1',
+          sortable: true,
           label: '1月'
         },
         {
           prop: 'month2',
+          sortable: true,
           label: '2月'
         },
         {
           prop: 'month3',
+          sortable: true,
           label: '3月'
         },
         {
           prop: 'month4',
+          sortable: true,
           label: '4月'
         },
         {
           prop: 'month5',
+          sortable: true,
           label: '5月'
         },
         {
           prop: 'month6',
+          sortable: true,
           label: '6月'
         },
         {
           prop: 'month7',
+          sortable: true,
           label: '7月'
         },
         {
           prop: 'month8',
+          sortable: true,
           label: '8月'
         },
         {
           prop: 'month9',
+          sortable: true,
           label: '9月'
         },
         {
           prop: 'month10',
+          sortable: true,
           label: '10月'
         },
         {
           prop: 'month11',
+          sortable: true,
           label: '11月'
         },
         {
           prop: 'month12',
+          sortable: true,
           label: '12月'
         },
         {
