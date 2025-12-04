@@ -133,6 +133,16 @@ export function postEventTag(params: {
 }
 
 /**
+ * 删除日历event数据
+ */
+export function deleteEventTag(params: { id: number }) {
+  return request.del({
+    url: '/dashboard/event',
+    params
+  })
+}
+
+/**
  * 查询日历diary数据
  */
 export function fetchDiaryList(params: { yearMonth: string }) {

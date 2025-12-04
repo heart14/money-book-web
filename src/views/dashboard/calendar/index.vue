@@ -116,7 +116,7 @@
 
 <script setup lang="ts">
   import { ref } from 'vue'
-  import { fetchEventList, postEventTag, fetchDiaryList } from '@/api/dashboard'
+  import { fetchEventList, postEventTag, deleteEventTag, fetchDiaryList } from '@/api/dashboard'
 
   const loading = ref(false)
   const error = ref('')
@@ -314,11 +314,17 @@
   /**
    * 删除事件
    */
-  const handleDeleteEvent = () => {
-    if (isEditing.value) {
-      events.value.splice(editingEventIndex.value, 1)
+  const handleDeleteEvent = async () => {
+    if (!isEditing.value) return
+    try {
+      await deleteEventTag({ id: eventForm.value.id })
+      await loadEventData(
+        `${currentDate.value.getFullYear()}-${String(currentDate.value.getMonth() + 1).padStart(2, '0')}`
+      )
       dialogVisible.value = false
       resetForm()
+    } catch (e: any) {
+      ElMessage.error(e?.message || '删除失败')
     }
   }
 
