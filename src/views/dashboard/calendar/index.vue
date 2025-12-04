@@ -22,11 +22,11 @@
                 : []
             "
           >
-            <ArtSvgIcon icon="ri:heart-2-line" />
+            <ArtSvgIcon icon="ri:book-3-line" />
           </div>
 
           <!-- 日期 -->
-          <p class="absolute top-1 right-1 text-sm">{{ formatDate(data.day) }}</p>
+          <p class="absolute top-2 right-2 text-sm">{{ formatDate(data.day) }}</p>
 
           <!-- 事件列表：点击自己 stop，避免冒泡到根节点触发新增 -->
           <div class="flex flex-col gap-1 w-full max-h-21 pr-1 mt-6 overflow-y-auto">
@@ -36,7 +36,7 @@
               @click.stop="handleEventClick(event)"
             >
               <div
-                class="min-w-25 px-3 py-1.5 overflow-hidden text-xs/6 font-medium text-ellipsis whitespace-nowrap rounded hover:opacity-80"
+                class="min-w-25 px-2.5 py-0.4 overflow-hidden text-xs/6 font-medium text-ellipsis whitespace-nowrap rounded hover:opacity-80"
                 :class="[event.bgClass, event.textClass]"
               >
                 {{ event.content }}
@@ -200,10 +200,10 @@
    * 班次 -> 颜色类名
    */
   const shiftColorMap = {
-    EARLY: { bgClass: 'bg-success/12', textClass: 'text-success' },
-    DAY: { bgClass: 'bg-warning/12', textClass: 'text-warning' },
-    NIGHT: { bgClass: 'bg-theme/12', textClass: 'text-theme' },
-    REST: { bgClass: 'bg-info/12', textClass: 'text-info' }
+    EARLY: { bgClass: 'bg-success/9', textClass: 'text-success' },
+    DAY: { bgClass: 'bg-primary/9', textClass: 'text-primary' },
+    NIGHT: { bgClass: 'bg-warning/9', textClass: 'text-warning' },
+    REST: { bgClass: 'bg-info/9', textClass: 'text-info' }
   } as const
 
   /**
