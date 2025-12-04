@@ -16,8 +16,8 @@
             :class="
               diaryMap[data.day]?.workShift
                 ? [
-                    getEventClasses(diaryMap[data.day].workShift as any).bgClass,
-                    getEventClasses(diaryMap[data.day].workShift as any).textClass
+                    getShiftClasses(diaryMap[data.day]?.workShift).bgClass,
+                    getShiftClasses(diaryMap[data.day]?.workShift).textClass
                   ]
                 : []
             "
@@ -132,7 +132,6 @@
     date: string
     endDate?: string
     content: string
-    type?: 'info' | 'primary' | 'success' | 'warning' | 'danger'
     bgClass?: string
     textClass?: string
   }
@@ -141,10 +140,10 @@
    * 事件类型选项
    */
   const workShiftTypes = [
-    { label: '早班', value: 'primary' },
-    { label: '白班', value: 'success' },
-    { label: '晚班', value: 'warning' },
-    { label: '休息', value: 'info' }
+    { label: '早班', value: 'EARLY' },
+    { label: '白班', value: 'DAY' },
+    { label: '晚班', value: 'NIGHT' },
+    { label: '休息', value: 'REST' }
   ] as const
 
   const currentDate = ref(new Date())
@@ -167,8 +166,7 @@
       events.value = eventData.value.map((it: any) => ({
         date: it.date,
         endDate: it.endDate,
-        content: it.content,
-        type: it.type || 'info'
+        content: it.content
       }))
     } catch (e: any) {
       error.value = e?.message || '网络错误'
@@ -183,8 +181,7 @@
   const eventForm = ref<CalendarEvent>({
     date: '',
     endDate: '',
-    content: '',
-    type: 'primary'
+    content: ''
   })
 
   /**
@@ -199,20 +196,23 @@
    */
   const formatDate = (date: string) => date.split('-')[2]
 
+  /** 班次 -> 颜色类名 */
+  const shiftColorMap = {
+    EARLY: { bgClass: 'bg-theme/12', textClass: 'text-theme' },
+    DAY: { bgClass: 'bg-success/12', textClass: 'text-success' },
+    NIGHT: { bgClass: 'bg-warning/12', textClass: 'text-warning' },
+    REST: { bgClass: 'bg-info/12', textClass: 'text-info' }
+  } as const
+
   /**
-   * 获取事件类型对应的样式类名
-   * @param type 事件类型
+   * 获取班次对应的样式类名
+   * @param shift 班次
    * @returns 包含背景和文字颜色的类名对象
    */
-  const getEventClasses = (type: CalendarEvent['type'] = 'primary') => {
-    const classMap = {
-      info: { bgClass: 'bg-info/12', textClass: 'text-info' },
-      primary: { bgClass: 'bg-theme/12', textClass: 'text-theme' },
-      success: { bgClass: 'bg-success/12', textClass: 'text-success' },
-      warning: { bgClass: 'bg-warning/12', textClass: 'text-warning' },
-      danger: { bgClass: 'bg-danger/12', textClass: 'text-danger' }
-    }
-    return classMap[type]
+  const getShiftClasses = (shift: string | undefined) => {
+    return shift
+      ? shiftColorMap[shift as keyof typeof shiftColorMap]
+      : { bgClass: '', textClass: '' }
   }
 
   /**
@@ -231,7 +231,7 @@
         return currentDate >= eventDate && currentDate <= endDate
       })
       .map((event) => {
-        const { bgClass, textClass } = getEventClasses(event.type)
+        const { bgClass, textClass } = { bgClass: 'bg-info/12', textClass: 'text-info' }
         return { ...event, bgClass, textClass }
       })
   }
@@ -243,8 +243,7 @@
     eventForm.value = {
       date: '',
       endDate: '',
-      content: '',
-      type: 'primary'
+      content: ''
     }
     editingEventIndex.value = -1
   }
@@ -258,8 +257,7 @@
     dialogTitle.value = '添加事件'
     eventForm.value = {
       date: day,
-      content: '',
-      type: 'primary'
+      content: ''
     }
     editingEventIndex.value = -1
     dialogVisible.value = true
