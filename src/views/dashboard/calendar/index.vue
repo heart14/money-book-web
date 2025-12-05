@@ -306,6 +306,7 @@
 
     try {
       await postEventTag(payload)
+      ElMessage.success('保存成功')
       // 保存成功后刷新当月数据
       await loadEventData(
         `${currentDate.value.getFullYear()}-${String(currentDate.value.getMonth() + 1).padStart(2, '0')}`
@@ -324,6 +325,7 @@
     if (!isEditing.value) return
     try {
       await deleteEventTag({ id: eventForm.value.id })
+      ElMessage.success('删除成功')
       await loadEventData(
         `${currentDate.value.getFullYear()}-${String(currentDate.value.getMonth() + 1).padStart(2, '0')}`
       )
@@ -369,6 +371,8 @@
       await loadDiaryData(
         `${currentDate.value.getFullYear()}-${String(currentDate.value.getMonth() + 1).padStart(2, '0')}`
       )
+      ElMessage.success('保存成功')
+      // 关闭日记弹窗
       diaryDialog.value = false
     } catch (e: any) {
       ElMessage.error(e?.message || '保存失败')
