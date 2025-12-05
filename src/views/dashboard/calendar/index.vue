@@ -116,7 +116,13 @@
 
 <script setup lang="ts">
   import { ref } from 'vue'
-  import { fetchEventList, postEventTag, deleteEventTag, fetchDiaryList } from '@/api/dashboard'
+  import {
+    fetchEventList,
+    postEventTag,
+    deleteEventTag,
+    fetchDiaryList,
+    postDiary
+  } from '@/api/dashboard'
 
   const loading = ref(false)
   const error = ref('')
@@ -328,10 +334,11 @@
     }
   }
 
-  const diaryMap = ref<Record<string, { diaryContent: string; workShift: string }>>({})
+  const diaryMap = ref<Record<string, { id: number; diaryContent: string; workShift: string }>>({})
   /* 日记弹窗 */
   const diaryDialog = ref(false)
   const diaryForm = ref({
+    id: 0,
     date: '',
     diaryContent: '',
     workShift: ''
@@ -340,17 +347,32 @@
   const handleDiaryClick = (day: string) => {
     diaryForm.value.date = day
     const hit = diaryMap.value[day]
+    diaryForm.value.id = hit?.id ?? 0
     diaryForm.value.diaryContent = hit?.diaryContent ?? ''
     diaryForm.value.workShift = hit?.workShift ?? ''
     diaryDialog.value = true
   }
 
   const handleSaveDiary = async () => {
-    // 保存成功后刷新当月数据
-    await loadDiaryData(
-      `${currentDate.value.getFullYear()}-${String(currentDate.value.getMonth() + 1).padStart(2, '0')}`
-    )
-    diaryDialog.value = false
+    if (!diaryForm.value.diaryContent && !diaryForm.value.workShift) return
+
+    const payload = {
+      id: diaryForm.value.id,
+      date: diaryForm.value.date,
+      workShift: diaryForm.value.workShift,
+      diaryContent: diaryForm.value.diaryContent.trim()
+    }
+
+    try {
+      await postDiary(payload)
+      // 保存成功后刷新当月数据
+      await loadDiaryData(
+        `${currentDate.value.getFullYear()}-${String(currentDate.value.getMonth() + 1).padStart(2, '0')}`
+      )
+      diaryDialog.value = false
+    } catch (e: any) {
+      ElMessage.error(e?.message || '保存失败')
+    }
   }
 
   const loadDiaryData = async (ym: string) => {
@@ -358,7 +380,11 @@
     const list = (res as any).data ?? res
     diaryMap.value = {}
     list.forEach((it: any) => {
-      diaryMap.value[it.date] = { diaryContent: it.diaryContent, workShift: it.workShift }
+      diaryMap.value[it.date] = {
+        id: it.id,
+        diaryContent: it.diaryContent,
+        workShift: it.workShift
+      }
     })
   }
 

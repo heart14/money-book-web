@@ -151,3 +151,18 @@ export function fetchDiaryList(params: { yearMonth: string }) {
     params
   })
 }
+
+/**
+ * 编辑或新增日历diary数据
+ */
+export function postDiary(params: {
+  id?: number
+  date: string
+  workShift: string
+  diaryContent: string
+}) {
+  return request.post({
+    url: '/dashboard/diary',
+    params
+  })
+}
