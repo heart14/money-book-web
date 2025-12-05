@@ -208,6 +208,9 @@
     "500": "抱歉，服务器出错了",
     "gohome": "返回首页"
   },
+  "navi": {
+    "systemName": "钱书"
+  },
   "menus": {
     "login": {
       "title": "登录"

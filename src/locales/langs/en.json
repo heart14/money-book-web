@@ -208,6 +208,9 @@
     "500": "Sorry, there was an error on the server",
     "gohome": "Go Home"
   },
+  "navi": {
+    "systemName": "MoneyBook"
+  },
   "menus": {
     "login": {
       "title": "Login"
