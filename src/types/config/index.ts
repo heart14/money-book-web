@@ -126,8 +126,8 @@ export interface FastEnterConfig {
 
 // 系统配置
 export interface SystemConfig {
-  // 系统基础信息
-  systemInfo: SystemBasicConfig
+  // // 系统基础信息
+  // systemInfo: SystemBasicConfig
   // 系统主题样式
   systemThemeStyles: SystemThemeTypes
   // 设置主题列表
