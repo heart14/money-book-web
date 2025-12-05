@@ -6,7 +6,7 @@
     :style="{ zIndex: zIndex }"
   >
     <ElWatermark
-      :content="content"
+      :content="realContent"
       :font="{ fontSize: fontSize, color: fontColor }"
       :rotate="rotate"
       :gap="[gapX, gapY]"
@@ -20,10 +20,12 @@
 <script setup lang="ts">
   // import AppConfig from '@/config'
   import { useSettingStore } from '@/store/modules/setting'
+  import { useUserStore } from '@/store/modules/user'
 
   defineOptions({ name: 'ArtWatermark' })
 
   const settingStore = useSettingStore()
+  const userStore = useUserStore()
   const { watermarkVisible } = storeToRefs(settingStore)
 
   interface WatermarkProps {
@@ -49,8 +51,8 @@
     zIndex?: number
   }
 
-  withDefaults(defineProps<WatermarkProps>(), {
-    content: 'topBar.search.title',
+  const props = withDefaults(defineProps<WatermarkProps>(), {
+    content: '',
     visible: false,
     fontSize: 16,
     fontColor: 'rgba(128, 128, 128, 0.2)',
@@ -61,4 +63,7 @@
     offsetY: 50,
     zIndex: 3100
   })
+
+  /** 如果外部没传 content，就用用户名 */
+  const realContent = computed(() => props.content || userStore.getUserInfo.username)
 </script>
