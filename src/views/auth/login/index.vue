@@ -96,7 +96,7 @@
 </template>
 
 <script setup lang="ts">
-  import AppConfig from '@/config'
+  // import AppConfig from '@/config'
   import { useUserStore } from '@/store/modules/user'
   import { getCssVar } from '@/utils/ui'
   import { useI18n } from 'vue-i18n'
@@ -135,7 +135,7 @@
   const isPassing = ref(false)
   const isClickPass = ref(false)
 
-  const systemName = AppConfig.systemInfo.name
+  const systemName = t('navi.systemName')
   const formRef = ref<FormInstance>()
 
   const formData = reactive({

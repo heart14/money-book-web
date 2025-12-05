@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-  import AppConfig from '@/config'
+  // import AppConfig from '@/config'
   import { useSettingStore } from '@/store/modules/setting'
 
   defineOptions({ name: 'ArtWatermark' })
@@ -50,7 +50,7 @@
   }
 
   withDefaults(defineProps<WatermarkProps>(), {
-    content: AppConfig.systemInfo.name,
+    content: 'topBar.search.title',
     visible: false,
     fontSize: 16,
     fontColor: 'rgba(128, 128, 128, 0.2)',

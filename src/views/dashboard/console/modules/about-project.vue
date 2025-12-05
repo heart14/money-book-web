@@ -22,10 +22,13 @@
 </template>
 
 <script setup lang="ts">
-  import AppConfig from '@/config'
+  // import AppConfig from '@/config'
   import { WEB_LINKS } from '@/utils/constants'
+  import { useI18n } from 'vue-i18n'
 
-  const systemName = AppConfig.systemInfo.name
+  const { t } = useI18n()
+
+  const systemName = t('navi.systemName')
 
   const linkList = [
     { label: '项目官网', url: WEB_LINKS.DOCS },

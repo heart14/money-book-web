@@ -6,7 +6,7 @@
  * @module utils/router
  */
 import { RouteLocationNormalized, RouteRecordRaw } from 'vue-router'
-import AppConfig from '@/config'
+// import AppConfig from '@/config'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import i18n, { $t } from '@/locales'
@@ -34,7 +34,7 @@ export const setPageTitle = (to: RouteLocationNormalized): void => {
   const { title } = to.meta
   if (title) {
     setTimeout(() => {
-      document.title = `${formatMenuTitle(String(title))} - ${AppConfig.systemInfo.name}`
+      document.title = `${formatMenuTitle(String(title))} - ${formatSysTitle()}`
     }, 150)
   }
 }
@@ -58,4 +58,12 @@ export const formatMenuTitle = (title: string): string => {
     return title
   }
   return ''
+}
+
+/**
+ * 格式化菜单标题中的系统名
+ * @returns 支持i18n的系统名
+ */
+export const formatSysTitle = (): string => {
+  return $t(`navi.systemName`)
 }
