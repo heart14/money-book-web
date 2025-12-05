@@ -135,7 +135,6 @@
   const isPassing = ref(false)
   const isClickPass = ref(false)
 
-  const systemName = t('navi.systemName')
   const formRef = ref<FormInstance>()
 
   const formData = reactive({
@@ -220,7 +219,7 @@
         type: 'success',
         duration: 2500,
         zIndex: 10000,
-        message: `${t('login.success.message')}, ${systemName}!`
+        message: `${t('login.success.message')}, ` + userStore.getUserInfo.nickname + '!'
       })
     }, 1000)
   }
