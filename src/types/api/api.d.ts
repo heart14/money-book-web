@@ -211,25 +211,15 @@ declare namespace Api {
 
     /** 用户列表项 */
     interface UserListItem {
-      id: number
-      avatar: string
-      status: string
-      userName: string
-      userGender: string
-      nickName: string
-      userPhone: string
-      userEmail: string
-      userRoles: string[]
-      createBy: string
-      createTime: string
-      updateBy: string
-      updateTime: string
+      uid: number
+      username: string
+      nickname: string
+      roles: string[]
     }
 
     /** 用户搜索参数 */
     type UserSearchParams = Partial<
-      Pick<UserListItem, 'id' | 'userName' | 'userGender' | 'userPhone' | 'userEmail' | 'status'> &
-        Api.Common.CommonSearchParams
+      Pick<UserListItem, 'userName' | 'nickName'> & Api.Common.CommonSearchParams
     >
 
     /** 角色列表 */
@@ -237,18 +227,15 @@ declare namespace Api {
 
     /** 角色列表项 */
     interface RoleListItem {
-      roleId: number
+      id: number
       roleName: string
       roleCode: string
-      description: string
-      enabled: boolean
-      createTime: string
+      roleDesc: string
     }
 
     /** 角色搜索参数 */
     type RoleSearchParams = Partial<
-      Pick<RoleListItem, 'roleId' | 'roleName' | 'roleCode' | 'description' | 'enabled'> &
-        Api.Common.CommonSearchParams
+      Pick<RoleListItem, 'roleName' | 'roleCode' | 'roleDesc'> & Api.Common.CommonSearchParams
     >
   }
 }
