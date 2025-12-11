@@ -51,14 +51,10 @@ export function postRole(params: {
   })
 }
 
-// 禁用角色
-export function deleteRole(params: { uid: number }) {
+// 删除角色
+export function removeRole(params: { id: number }) {
   return request.del({
     url: '/role',
     params
   })
 }
-
-//---------------分类管理----------------//
-
-//---------------菜单管理----------------//

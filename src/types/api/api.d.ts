@@ -231,6 +231,7 @@ declare namespace Api {
       roleName: string
       roleCode: string
       roleDesc: string
+      status: 0 | 1
     }
 
     /** 角色搜索参数 */
