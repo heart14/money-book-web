@@ -13,16 +13,11 @@
       <ElFormItem label="角色编码" prop="roleCode">
         <ElInput v-model="form.roleCode" placeholder="请输入角色编码" />
       </ElFormItem>
-      <ElFormItem label="描述" prop="description">
-        <ElInput
-          v-model="form.description"
-          type="textarea"
-          :rows="3"
-          placeholder="请输入角色描述"
-        />
+      <ElFormItem label="描述" prop="roleDesc">
+        <ElInput v-model="form.roleDesc" type="textarea" :rows="3" placeholder="请输入角色描述" />
       </ElFormItem>
       <ElFormItem label="启用">
-        <ElSwitch v-model="form.enabled" />
+        <ElSwitch v-model="statusBool" />
       </ElFormItem>
     </ElForm>
     <template #footer>
@@ -34,6 +29,7 @@
 
 <script setup lang="ts">
   import type { FormInstance, FormRules } from 'element-plus'
+  import { postRole } from '@/api/system-manage'
 
   type RoleListItem = Api.SystemManage.RoleListItem
 
@@ -85,12 +81,21 @@
    * 表单数据
    */
   const form = reactive<RoleListItem>({
-    roleId: 0,
+    id: 0,
     roleName: '',
     roleCode: '',
-    description: '',
-    createTime: '',
-    enabled: true
+    roleDesc: '',
+    status: 0
+  })
+
+  /**
+   * 角色状态布尔值，用于 Switch 组件绑定
+   */
+  const statusBool = computed<boolean>({
+    get: () => form.status === 1,
+    set: (val: boolean) => {
+      form.status = val ? 1 : 0
+    }
   })
 
   /**
@@ -123,12 +128,11 @@
       Object.assign(form, props.roleData)
     } else {
       Object.assign(form, {
-        roleId: 0,
+        id: 0,
         roleName: '',
         roleCode: '',
-        description: '',
-        createTime: '',
-        enabled: true
+        roleDesc: '',
+        status: 0
       })
     }
   }
@@ -150,7 +154,16 @@
 
     try {
       await formRef.value.validate()
-      // TODO: 调用新增/编辑接口
+      const payload = {
+        id: props.dialogType === 'add' ? undefined : form.id, // 新增不传 id
+        roleName: form.roleName.trim(),
+        roleCode: form.roleCode.trim(),
+        roleDesc: form.roleDesc.trim(),
+        status: form.status
+      }
+      console.log('postRole payload:' + payload)
+      const res = postRole(payload)
+      console.log('postRole res:' + res)
       const message = props.dialogType === 'add' ? '新增成功' : '修改成功'
       ElMessage.success(message)
       emit('success')

@@ -43,8 +43,8 @@
    * 角色状态选项
    */
   const statusOptions = ref([
-    { label: '启用', value: true },
-    { label: '禁用', value: false }
+    { label: '启用', value: 1 },
+    { label: '禁用', value: 0 }
   ])
 
   /**
@@ -67,14 +67,14 @@
     },
     {
       label: '角色描述',
-      key: 'description',
+      key: 'roleDesc',
       type: 'input',
       placeholder: '请输入角色描述',
       clearable: true
     },
     {
       label: '角色状态',
-      key: 'enabled',
+      key: 'status',
       type: 'select',
       props: {
         placeholder: '请选择状态',
@@ -97,7 +97,8 @@
         shortcuts: [
           { text: '今日', value: [new Date(), new Date()] },
           { text: '最近一周', value: [new Date(Date.now() - 604800000), new Date()] },
-          { text: '最近一个月', value: [new Date(Date.now() - 2592000000), new Date()] }
+          { text: '最近一个月', value: [new Date(Date.now() - 2592000000), new Date()] },
+          { text: '最近三个月', value: [new Date(Date.now() - 7776000000), new Date()] }
         ]
       }
     }

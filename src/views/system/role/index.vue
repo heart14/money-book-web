@@ -58,7 +58,7 @@
 <script setup lang="ts">
   import { ButtonMoreItem } from '@/components/core/forms/art-button-more/index.vue'
   import { useTable } from '@/hooks/core/useTable'
-  import { fetchGetRoleList } from '@/api/system-manage'
+  import { fetchRoleList, removeRole } from '@/api/system-manage'
   import ArtButtonMore from '@/components/core/forms/art-button-more/index.vue'
   import RoleSearch from './modules/role-search.vue'
   import RoleEditDialog from './modules/role-edit-dialog.vue'
@@ -73,8 +73,8 @@
   const searchForm = ref({
     roleName: undefined,
     roleCode: undefined,
-    description: undefined,
-    enabled: undefined,
+    roleDesc: undefined,
+    status: undefined,
     daterange: undefined
   })
 
@@ -99,7 +99,7 @@
   } = useTable({
     // 核心配置
     core: {
-      apiFn: fetchGetRoleList,
+      apiFn: fetchRoleList,
       apiParams: {
         current: 1,
         size: 20
@@ -108,7 +108,7 @@
       excludeParams: ['daterange'],
       columnsFactory: () => [
         {
-          prop: 'roleId',
+          prop: 'id',
           label: '角色ID',
           width: 100
         },
@@ -123,17 +123,17 @@
           minWidth: 120
         },
         {
-          prop: 'description',
+          prop: 'roleDesc',
           label: '角色描述',
           minWidth: 150,
           showOverflowTooltip: true
         },
         {
-          prop: 'enabled',
+          prop: 'status',
           label: '角色状态',
           width: 100,
           formatter: (row) => {
-            const statusConfig = row.enabled
+            const statusConfig = row.status
               ? { type: 'success', text: '启用' }
               : { type: 'warning', text: '禁用' }
             return h(
@@ -144,7 +144,7 @@
           }
         },
         {
-          prop: 'createTime',
+          prop: 'createAt',
           label: '创建日期',
           width: 180,
           sortable: true
@@ -231,7 +231,8 @@
       type: 'warning'
     })
       .then(() => {
-        // TODO: 调用删除接口
+        const res = removeRole({ id: row.id })
+        console.log('removeRole res:' + res)
         ElMessage.success('删除成功')
         refreshData()
       })
