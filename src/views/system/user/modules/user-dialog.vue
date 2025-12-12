@@ -6,20 +6,24 @@
     align-center
   >
     <ElForm ref="formRef" :model="formData" :rules="rules" label-width="80px">
-      <ElFormItem label="用户名" prop="username">
+      <ElFormItem label="用户账号" prop="username">
         <ElInput v-model="formData.username" placeholder="请输入用户名" />
       </ElFormItem>
-      <ElFormItem label="手机号" prop="phone">
-        <ElInput v-model="formData.phone" placeholder="请输入手机号" />
+      <ElFormItem label="用户昵称" prop="nickname">
+        <ElInput v-model="formData.nickname" placeholder="请输入用户名" />
       </ElFormItem>
-      <ElFormItem label="性别" prop="gender">
-        <ElSelect v-model="formData.gender">
-          <ElOption label="男" value="男" />
-          <ElOption label="女" value="女" />
+      <ElFormItem label="状态" prop="status">
+        <ElSelect v-model="formData.status" :disabled="props.type === 'add'">
+          <ElOption
+            v-for="item in statusOptions"
+            :key="item.value"
+            :value="item.value"
+            :label="item.label"
+          />
         </ElSelect>
       </ElFormItem>
       <ElFormItem label="角色" prop="role">
-        <ElSelect v-model="formData.role" multiple>
+        <ElSelect v-model="formData.roles" multiple>
           <ElOption
             v-for="role in roleList"
             :key="role.roleCode"
@@ -41,6 +45,7 @@
 <script setup lang="ts">
   import { ROLE_LIST_DATA } from '@/mock/temp/formData'
   import type { FormInstance, FormRules } from 'element-plus'
+  import { postUser } from '@/api/system-manage'
 
   interface Props {
     visible: boolean
@@ -59,6 +64,13 @@
   // 角色列表数据
   const roleList = ref(ROLE_LIST_DATA)
 
+  // 动态 options
+  const statusOptions = ref<{ label: string; value: number }[]>([
+    { label: '正常', value: 1 },
+    { label: '异常', value: 0 },
+    { label: '注销', value: 2 }
+  ])
+
   // 对话框显示控制
   const dialogVisible = computed({
     get: () => props.visible,
@@ -72,10 +84,11 @@
 
   // 表单数据
   const formData = reactive({
+    uid: 0 as number | undefined,
     username: '',
-    phone: '',
-    gender: '男',
-    role: [] as string[]
+    nickname: '',
+    status: 1,
+    roles: [] as string[]
   })
 
   // 表单验证规则
@@ -84,12 +97,12 @@
       { required: true, message: '请输入用户名', trigger: 'blur' },
       { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
     ],
-    phone: [
-      { required: true, message: '请输入手机号', trigger: 'blur' },
-      { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号格式', trigger: 'blur' }
+    nickname: [
+      { required: true, message: '请输入用户名', trigger: 'blur' },
+      { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
     ],
-    gender: [{ required: true, message: '请选择性别', trigger: 'blur' }],
-    role: [{ required: true, message: '请选择角色', trigger: 'blur' }]
+    status: [{ required: true, message: '请选择用户状态', trigger: 'blur' }],
+    roles: [{ required: true, message: '请选择角色', trigger: 'blur' }]
   }
 
   /**
@@ -101,10 +114,11 @@
     const row = props.userData
 
     Object.assign(formData, {
-      username: isEdit && row ? row.userName || '' : '',
-      phone: isEdit && row ? row.userPhone || '' : '',
-      gender: isEdit && row ? row.userGender || '男' : '男',
-      role: isEdit && row ? (Array.isArray(row.userRoles) ? row.userRoles : []) : []
+      uid: isEdit && row ? row.uid : undefined,
+      username: isEdit && row ? row.username || '' : '',
+      nickname: isEdit && row ? row.nickname || '' : '',
+      status: isEdit && row ? row.status || '' : 1,
+      roles: isEdit && row ? (Array.isArray(row.roles) ? row.roles : []) : []
     })
   }
 
@@ -132,11 +146,20 @@
   const handleSubmit = async () => {
     if (!formRef.value) return
 
-    await formRef.value.validate((valid) => {
+    await formRef.value.validate(async (valid) => {
       if (valid) {
-        ElMessage.success(dialogType.value === 'add' ? '添加成功' : '更新成功')
-        dialogVisible.value = false
-        emit('submit')
+        if (props.type === 'add') {
+          formData.uid = undefined
+        }
+        try {
+          const res = await postUser(formData)
+          console.log(res)
+          ElMessage.success(dialogType.value === 'add' ? '添加成功' : '更新成功')
+          dialogVisible.value = false
+          emit('submit')
+        } catch (e: any) {
+          ElMessage.error(e.message || '操作失败')
+        }
       }
     })
   }
