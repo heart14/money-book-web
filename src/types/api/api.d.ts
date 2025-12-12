@@ -214,6 +214,8 @@ declare namespace Api {
       uid: number
       username: string
       nickname: string
+      status: number
+      createAt: string
       roles: string[]
     }
 
