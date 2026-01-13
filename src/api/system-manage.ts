@@ -1,6 +1,5 @@
 import request from '@/utils/http'
-// import { AppRouteRecord } from '@/types/router'
-
+import { AppRouteRecord } from '@/types/router'
 //---------------用户管理----------------//
 
 // 获取用户列表
@@ -12,7 +11,13 @@ export function fetchUserList(params: Api.SystemManage.UserSearchParams) {
 }
 
 // 编辑或新增用户
-export function postUser(params: { uid?: number; username: string; nickname: string; roles: [] }) {
+export function postUser(params: {
+  uid?: number
+  username: string
+  nickname: string
+  status: number
+  roles: string[]
+}) {
   return request.post({
     url: '/user',
     params
@@ -56,5 +61,28 @@ export function removeRole(params: { id: number }) {
   return request.del({
     url: '/role',
     params
+  })
+}
+
+//---------------分类管理----------------//
+// 获取角色列表
+export function fetchCategoryTree() {
+  return request.get<Api.CategoryManage.CategoryNode[]>({
+    url: '/category/tree'
+  })
+}
+
+//---------------菜单管理----------------//
+// 获取用户列表
+export function fetchMenuList() {
+  return request.get({
+    url: '/user/list'
+  })
+}
+
+// 获取菜单列表
+export function fetchGetMenuList() {
+  return request.get<AppRouteRecord[]>({
+    url: '/api/v3/system/menus'
   })
 }
