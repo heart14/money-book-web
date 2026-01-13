@@ -241,4 +241,17 @@ declare namespace Api {
       Pick<RoleListItem, 'roleName' | 'roleCode' | 'roleDesc'> & Api.Common.CommonSearchParams
     >
   }
+
+  /** 分类管理类型 */
+  namespace CategoryManage {
+    interface CategoryNode {
+      id: number
+      parentId: number
+      level: number
+      type: number
+      name: string
+      path: string
+      children?: CategoryNode[]
+    }
+  }
 }
