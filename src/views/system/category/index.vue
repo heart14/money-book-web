@@ -115,7 +115,18 @@
     },
     // { prop: 'type', label: '类型' },
     // { prop: 'path', label: '路径' },
-    // { prop: 'level', label: '层级', width: 80 },
+    // {
+    //   prop: 'level',
+    //   label: '层级',
+    //   formatter: (row: any) => {
+    //     const typeMap: Record<number, string> = {
+    //       1: '一级分类',
+    //       2: '二级分类',
+    //       3: '三级分类'
+    //     }
+    //     return typeMap[row.level] ?? ''
+    //   }
+    // },
     {
       prop: 'isDeleted',
       label: '状态',
