@@ -65,7 +65,7 @@ export function removeRole(params: { id: number }) {
 }
 
 //---------------分类管理----------------//
-// 获取角色列表
+// 获取树形分类列表
 export function fetchCategoryTree() {
   return request.get<Api.CategoryManage.CategoryNode[]>({
     url: '/category/tree'
