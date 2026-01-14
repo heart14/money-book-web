@@ -103,7 +103,7 @@
   const { columnChecks, columns } = useTableColumns(() => [
     {
       prop: 'name',
-      label: '分类名称',
+      label: '分类',
       // width: 270,
       formatter: (row: any) => {
         const typeConfig = getTypeConfig(row.type)
@@ -113,6 +113,7 @@
         ])
       }
     },
+    { prop: 'description', label: '描述' },
     // { prop: 'type', label: '类型' },
     // { prop: 'path', label: '路径' },
     // {
@@ -167,7 +168,7 @@
 
   /* ---------- 数据 ---------- */
   const tableData = ref<any[]>([])
-  const getList = async () => {
+  const getTreeList = async () => {
     loading.value = true
     try {
       const list = await fetchCategoryTree()
@@ -177,19 +178,19 @@
       loading.value = false
     }
   }
-  onMounted(getList)
+  onMounted(getTreeList)
 
   /* ---------- 搜索/刷新 ---------- */
   const handleReset = () => {
     Object.assign(formFilters, initialSearch)
     Object.assign(appliedFilters, initialSearch)
-    getList()
+    getTreeList()
   }
   const handleSearch = () => {
     Object.assign(appliedFilters, formFilters)
-    getList()
+    getTreeList()
   }
-  const handleRefresh = () => getList()
+  const handleRefresh = () => getTreeList()
 
   /* ---------- 弹窗 ---------- */
   const handleAdd = () => {
@@ -209,7 +210,7 @@
     ElMessage.success('保存成功')
     dialogVisible.value = false
     console.log('提交的表单数据:', form)
-    getList()
+    getTreeList()
   }
 
   /* ---------- 删除 ---------- */
@@ -219,7 +220,7 @@
       await ElMessageBox.confirm('确定删除？', '提示', { type: 'warning' })
       // TODO 调用删除接口
       ElMessage.success('删除成功')
-      getList()
+      getTreeList()
     } catch (e) {
       ElMessage.error('删除失败' + e)
     }
