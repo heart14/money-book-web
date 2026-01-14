@@ -26,7 +26,7 @@
 
       <ArtTable
         ref="tableRef"
-        rowKey="path"
+        rowKey="id"
         :loading="loading"
         :columns="columns"
         :data="tableData"
@@ -107,10 +107,21 @@
       // width: 270,
       formatter: (row: any) => {
         const typeConfig = getTypeConfig(row.type)
-        return h('span', [
-          h(ElTag, { type: typeConfig.type, size: 'small' }, () => typeConfig.text),
-          h('span', ' ' + row.name)
-        ])
+        return h(
+          'span',
+          {
+            onClick: (e: MouseEvent) => {
+              // 阻止事件冒泡，避免触发 row-click 等其他逻辑
+              e.stopPropagation()
+              // 手动切换展开状态
+              tableRef.value?.elTableRef?.toggleRowExpansion(row)
+            }
+          },
+          [
+            h(ElTag, { type: typeConfig.type, size: 'small' }, () => typeConfig.text),
+            h('span', ' ' + row.name)
+          ]
+        )
       }
     },
     { prop: 'description', label: '描述' },
