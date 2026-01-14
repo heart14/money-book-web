@@ -115,15 +115,17 @@
         // { type: 'index', width: 60, label: '序号' }, // 序号
         { prop: 'id', label: 'id', visible: false },
         {
-          prop: 'type',
-          label: '',
-          width: 70,
-          formatter: (row) => {
+          prop: 'title',
+          label: '标题',
+          width: 270,
+          formatter: (row: any) => {
             const typeConfig = getTransactionTypeConfig(row.type)
-            return h(ElTag, { type: typeConfig.type }, () => typeConfig.text)
+            return h('span', [
+              h(ElTag, { type: typeConfig.type, size: 'small' }, () => typeConfig.text),
+              h('span', ' ' + row.title)
+            ])
           }
         },
-        { prop: 'title', label: '标题' },
         { prop: 'amount', label: '金额（元）', sortable: true },
         { prop: 'categoryPath', label: '分类' },
         { prop: 'remark', label: '备注' },
