@@ -182,8 +182,13 @@
   const getTreeList = async () => {
     loading.value = true
     try {
-      const list = await fetchCategoryTree()
-      // const list = await fetchCategoryList(appliedFilters)
+      // 将 reactive 对象转换为普通对象并处理 type 字段
+      const params: any = {
+        name: appliedFilters.name === '' ? undefined : appliedFilters.name,
+        type: appliedFilters.type === '' ? undefined : Number(appliedFilters.type)
+      }
+
+      const list = await fetchCategoryTree(params)
       tableData.value = list
     } finally {
       loading.value = false
