@@ -98,7 +98,7 @@
       }
     },
     {
-      label: '类型',
+      label: '状态',
       key: 'isDeleted',
       type: 'select',
       props: {
@@ -187,14 +187,16 @@
             title: '编辑'
           })
         )
-        btnList.push(
-          h(ArtButtonTable, {
-            type: 'delete',
-            onClick: () => handleDelete(row),
-            title: '删除'
-          })
-        )
-
+        // 仅在未删除状态显示“删除”按钮
+        if (Number(row.isDeleted) === 0) {
+          btnList.push(
+            h(ArtButtonTable, {
+              type: 'delete',
+              onClick: () => handleDelete(row),
+              title: '删除'
+            })
+          )
+        }
         return h('div', buttonStyle, btnList)
       }
     }
