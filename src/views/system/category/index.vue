@@ -43,7 +43,7 @@
 <script setup lang="ts">
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
   import { useTableColumns } from '@/hooks/core/useTableColumns'
-  import { fetchCategoryTree } from '@/api/system-manage'
+  import { fetchCategoryTree, postCategory, removeCategory } from '@/api/system-manage'
   import CategoryDialog from './modules/category-dialog.vue'
   import { ElTag, ElMessage, ElMessageBox } from 'element-plus'
 
@@ -240,19 +240,44 @@
     dialogVisible.value = true
   }
   const handleAddChild = (row: any) => {
-    editData.value = { parentId: row.id, parentName: row.name }
+    editData.value = { parentId: row.id, parentName: row.name, parentType: row.type }
     dialogVisible.value = true
   }
+  const findParentName = (id: number): string => {
+    let name = ''
+    const walk = (nodes: any[]): boolean => {
+      for (const n of nodes) {
+        if (n.id === id) {
+          name = n.name
+          return true
+        }
+        if (n.children?.length) {
+          if (walk(n.children)) return true
+        }
+      }
+      return false
+    }
+    walk(tableData.value)
+    return name
+  }
+
   const handleEdit = (row: any) => {
-    editData.value = row
+    const parentName = row.parentName ?? (row.parentId ? findParentName(row.parentId) : '')
+    editData.value = { ...row, parentName }
     dialogVisible.value = true
   }
   const handleSubmit = (form: any) => {
-    // TODO 调用保存接口
-    ElMessage.success('保存成功')
-    dialogVisible.value = false
-    console.log('提交的表单数据:', form)
-    getTreeList()
+    ;(async () => {
+      try {
+        await postCategory(form)
+        ElMessage.success('保存成功')
+        dialogVisible.value = false
+        getTreeList()
+      } catch (e) {
+        console.error('保存分类失败', e)
+        ElMessage.error('保存失败' + e)
+      }
+    })()
   }
 
   /* ---------- 删除 ---------- */
@@ -260,7 +285,7 @@
     try {
       console.log('删除分类:', row)
       await ElMessageBox.confirm('确定删除？', '提示', { type: 'warning' })
-      // TODO 调用删除接口
+      await removeCategory({ id: row.id })
       ElMessage.success('删除成功')
       getTreeList()
     } catch (e) {

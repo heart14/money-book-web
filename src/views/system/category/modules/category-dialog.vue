@@ -18,7 +18,7 @@
     />
 
     <template #footer>
-      <ElButton @click:="dialogVisible">取消</ElButton>
+      <ElButton @click="dialogVisible = false">取消</ElButton>
       <ElButton type="primary" @click="onSubmit">确定</ElButton>
     </template>
   </ElDialog>
@@ -44,7 +44,10 @@
     parentName: '',
     name: '',
     type: 1,
-    sort: 1
+    level: 1,
+    path: '',
+    isDeleted: 0,
+    description: ''
   })
 
   const rules = {
@@ -52,22 +55,53 @@
   }
 
   const formItems = computed<FormItem[]>(() => [
-    ...(form.parentId
+    ...(form.parentId && Number(form.level) === 2
       ? [{ label: '上级分类', key: 'parentName', type: 'input', props: { disabled: true } }]
       : []),
     { label: '分类名称', key: 'name', type: 'input' },
     {
       label: '类型',
       key: 'type',
-      type: 'radio',
+      type: 'select',
       props: {
         options: [
-          { label: '收入', value: 0 },
-          { label: '支出', value: 1 }
-        ]
+          { label: '收入', value: 1 },
+          { label: '支出', value: 2 },
+          { label: '收支', value: 3 }
+        ],
+        // 禁用规则：编辑时不可改；新增子类（有 parentId）时也不可改；仅在新增顶级分类时可改。
+        disabled: isEdit.value || !!form.parentId
       }
     },
-    { label: '排序', key: 'sort', type: 'number', props: { min: 1 } }
+    {
+      label: '层级',
+      key: 'level',
+      type: 'select',
+      props: {
+        options: [
+          { label: '一级分类', value: 1 },
+          { label: '二级分类', value: 2 }
+        ],
+        disabled: isEdit.value || !!form.parentId
+      }
+    },
+    {
+      label: '状态',
+      key: 'isDeleted',
+      type: 'switch',
+      props: {
+        activeValue: 0,
+        inactiveValue: 1,
+        activeColor: '#67C23A',
+        inactiveColor: '#F56C6C',
+        activeText: '正常',
+        inactiveText: '禁用',
+        inlinePrompt: true,
+        // showText: true,
+        style: '--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949'
+      }
+    },
+    { label: '描述', key: 'description', type: 'textarea', props: { rows: 4 } }
   ])
 
   function loadData() {
@@ -77,27 +111,48 @@
       parentId: props.editData.parentId,
       parentName: props.editData.parentName,
       name: props.editData.name,
-      type: props.editData.type,
-      sort: props.editData.sort
+      // 优先使用 editData.type（编辑已有项），若不存在则使用父分类的类型（新增子类场景）
+      type: props.editData.type ?? props.editData.parentType ?? 1,
+      level:
+        props.editData.level ??
+        (props.editData.parentId ? Number(props.editData.level ?? 1) + 1 : 1),
+      path: props.editData.path ?? '',
+      isDeleted: props.editData.isDeleted ?? 0,
+      description: props.editData.description ?? ''
     })
   }
 
   function onSubmit() {
     formRef.value.validate((valid: boolean) => {
       if (!valid) return
-      emit('submit', { ...form })
+      // 提交时只发送后台需要的字段
+      const payload: any = {
+        id: form.id,
+        parentId: form.parentId,
+        name: form.name,
+        type: Number(form.type),
+        level: Number(form.level),
+        path: form.path,
+        isDeleted: Number(form.isDeleted),
+        description: form.description
+      }
+
+      emit('submit', payload)
     })
   }
 
   function onClosed() {
-    formRef.value.resetFields()
+    formRef.value?.reset()
     Object.assign(form, {
       id: undefined,
       parentId: undefined,
       parentName: '',
       name: '',
       type: 1,
-      sort: 1
+      level: 1,
+      path: '',
+      isDeleted: 0,
+      description: ''
     })
   }
 
