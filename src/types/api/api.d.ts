@@ -253,5 +253,8 @@ declare namespace Api {
       path: string
       children?: CategoryNode[]
     }
+
+    /** 分类搜索参数 */
+    type CateSearchParams = Partial<Pick<CategoryNode, 'type' | 'name'>>
   }
 }
