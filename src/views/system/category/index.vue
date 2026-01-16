@@ -106,7 +106,7 @@
         options: [
           { label: '全部', value: '' },
           { label: '正常', value: 0 },
-          { label: '已删除', value: 1 }
+          { label: '禁用', value: 1 }
         ]
       }
     }
@@ -157,7 +157,7 @@
       label: '状态',
       formatter: (row: any) => {
         return row.isDeleted
-          ? h(ElTag, { type: 'danger', size: 'small' }, () => '已删除')
+          ? h(ElTag, { type: 'danger', size: 'small' }, () => '禁用')
           : h(ElTag, { type: 'success', size: 'small' }, () => '正常')
       }
     },
