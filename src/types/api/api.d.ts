@@ -251,10 +251,11 @@ declare namespace Api {
       type: number
       name: string
       path: string
+      isDeleted: number
       children?: CategoryNode[]
     }
 
     /** 分类搜索参数 */
-    type CateSearchParams = Partial<Pick<CategoryNode, 'type' | 'name'>>
+    type CateSearchParams = Partial<Pick<CategoryNode, 'type' | 'name' | 'isDeleted'>>
   }
 }

@@ -59,7 +59,7 @@
   const editData = ref<any>(null)
 
   // 搜索
-  const initialSearch = { name: '', type: '' }
+  const initialSearch = { name: '', type: '', isDeleted: '' }
   const formFilters = reactive({ ...initialSearch })
   const appliedFilters = reactive({ ...initialSearch })
 
@@ -94,6 +94,19 @@
           { label: '收入', value: 1 },
           { label: '支出', value: 2 },
           { label: '收支', value: 3 }
+        ]
+      }
+    },
+    {
+      label: '类型',
+      key: 'isDeleted',
+      type: 'select',
+      props: {
+        clearable: true,
+        options: [
+          { label: '全部', value: '' },
+          { label: '正常', value: 0 },
+          { label: '已删除', value: 1 }
         ]
       }
     }
@@ -192,10 +205,11 @@
   const getTreeList = async () => {
     loading.value = true
     try {
-      // 将 reactive 对象转换为普通对象并处理 type 字段
+      // 将 reactive 对象转换为普通对象并处理 类型、状态 字段
       const params: any = {
         name: appliedFilters.name === '' ? undefined : appliedFilters.name,
-        type: appliedFilters.type === '' ? undefined : Number(appliedFilters.type)
+        type: appliedFilters.type === '' ? undefined : Number(appliedFilters.type),
+        isDeleted: appliedFilters.isDeleted === '' ? undefined : Number(appliedFilters.isDeleted)
       }
 
       const list = await fetchCategoryTree(params)
