@@ -155,24 +155,34 @@
       align: 'center',
       formatter: (row: any) => {
         const buttonStyle = { style: 'text-align: right' }
+        const btnList: any[] = []
 
-        return h('div', buttonStyle, [
-          h(ArtButtonTable, {
-            type: 'add',
-            onClick: () => handleAddChild(row),
-            title: '新增子类'
-          }),
+        // 仅在一级分类显示“新增子类”按钮
+        if (Number(row.level) === 1) {
+          btnList.push(
+            h(ArtButtonTable, {
+              type: 'add',
+              onClick: () => handleAddChild(row),
+              title: '新增子类'
+            })
+          )
+        }
+        btnList.push(
           h(ArtButtonTable, {
             type: 'edit',
             onClick: () => handleEdit(row),
             title: '编辑'
-          }),
+          })
+        )
+        btnList.push(
           h(ArtButtonTable, {
             type: 'delete',
             onClick: () => handleDelete(row),
             title: '删除'
           })
-        ])
+        )
+
+        return h('div', buttonStyle, btnList)
       }
     }
   ])
