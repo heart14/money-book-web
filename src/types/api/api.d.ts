@@ -252,6 +252,7 @@ declare namespace Api {
       name: string
       path: string
       isDeleted: number
+      description: string
       children?: CategoryNode[]
     }
 

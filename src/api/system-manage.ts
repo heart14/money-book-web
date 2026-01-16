@@ -73,6 +73,31 @@ export function fetchCategoryTree(params: Api.CategoryManage.CateSearchParams) {
   })
 }
 
+// 新增或编辑分类
+export function postCategory(params: {
+  id?: number
+  parentId?: number
+  type: number
+  level?: number
+  name: string
+  path?: string
+  isDeleted?: number
+  description?: string
+}) {
+  return request.post({
+    url: '/category',
+    params
+  })
+}
+
+// 删除分类
+export function removeCategory(params: { id: number }) {
+  return request.del({
+    url: '/category',
+    params
+  })
+}
+
 //---------------菜单管理----------------//
 // 获取用户列表
 export function fetchMenuList() {
