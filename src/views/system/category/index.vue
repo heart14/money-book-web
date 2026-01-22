@@ -139,19 +139,18 @@
     },
     { prop: 'description', label: '描述' },
     // { prop: 'type', label: '类型' },
-    // { prop: 'path', label: '路径' },
     // {
     //   prop: 'level',
     //   label: '层级',
     //   formatter: (row: any) => {
     //     const typeMap: Record<number, string> = {
     //       1: '一级分类',
-    //       2: '二级分类',
-    //       3: '三级分类'
+    //       2: '二级分类'
     //     }
     //     return typeMap[row.level] ?? ''
     //   }
     // },
+    // { prop: 'path', label: '路径' },
     {
       prop: 'isDeleted',
       label: '状态',
@@ -208,10 +207,16 @@
     loading.value = true
     try {
       // 将 reactive 对象转换为普通对象并处理 类型、状态 字段
+      const parseNumber = (v: any): number | undefined => {
+        if (v === '' || v === null || v === undefined) return undefined
+        const n = Number(v)
+        return Number.isFinite(n) ? n : undefined
+      }
+
       const params: any = {
         name: appliedFilters.name === '' ? undefined : appliedFilters.name,
-        type: appliedFilters.type === '' ? undefined : Number(appliedFilters.type),
-        isDeleted: appliedFilters.isDeleted === '' ? undefined : Number(appliedFilters.isDeleted)
+        type: parseNumber(appliedFilters.type),
+        isDeleted: parseNumber(appliedFilters.isDeleted)
       }
 
       const list = await fetchCategoryTree(params)
