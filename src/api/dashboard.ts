@@ -6,9 +6,10 @@ import request from '@/utils/http'
  * 获取统计卡片数据
  * @returns 统计卡片信息
  */
-export function fetchStatCardList() {
+export function fetchStatCardList(params?: { year?: string }) {
   return request.get<Api.Dashboard.CardDataItem>({
-    url: '/dashboard/cardListData'
+    url: '/dashboard/cardListData',
+    params
   })
 }
 
@@ -16,9 +17,10 @@ export function fetchStatCardList() {
  * 获取月度收入数据
  * @returns 月度收入数据
  */
-export function fetchMonthlyIncome() {
+export function fetchMonthlyIncome(params?: { year?: string }) {
   return request.get<Api.Dashboard.MonthlyIncomeItem>({
-    url: '/dashboard/monthlyIncome'
+    url: '/dashboard/monthlyIncome',
+    params
   })
 }
 
@@ -26,9 +28,10 @@ export function fetchMonthlyIncome() {
  * 获取月度支出数据
  * @returns 月度支出数据
  */
-export function fetchMonthlyExpense() {
+export function fetchMonthlyExpense(params?: { year?: string }) {
   return request.get<Api.Dashboard.MonthlyExpenseItem>({
-    url: '/dashboard/monthlyExpense'
+    url: '/dashboard/monthlyExpense',
+    params
   })
 }
 
@@ -36,9 +39,10 @@ export function fetchMonthlyExpense() {
  * 获取分类收入统计数据
  * @returns 分类收入统计数据
  */
-export function fetchCategoryIncome() {
+export function fetchCategoryIncome(params?: { year?: string }) {
   return request.get<Api.Dashboard.CategoryIncomeItem>({
-    url: '/dashboard/categoryIncome'
+    url: '/dashboard/categoryIncome',
+    params
   })
 }
 
@@ -46,9 +50,10 @@ export function fetchCategoryIncome() {
  * 获取分类支出统计数据
  * @returns 分类支出统计数据
  */
-export function fetchCategoryExpense() {
+export function fetchCategoryExpense(params?: { year?: string }) {
   return request.get<Api.Dashboard.CategoryExpenseItem>({
-    url: '/dashboard/categoryExpense'
+    url: '/dashboard/categoryExpense',
+    params
   })
 }
 
@@ -56,9 +61,10 @@ export function fetchCategoryExpense() {
  * 获取大额消费记录数据
  * @returns 大额消费记录数据
  */
-export function fetchLargeConsume() {
+export function fetchLargeConsume(params?: { year?: string }) {
   return request.get<Api.Dashboard.LargeConsumeItem>({
-    url: '/dashboard/largeConsume'
+    url: '/dashboard/largeConsume',
+    params
   })
 }
 
