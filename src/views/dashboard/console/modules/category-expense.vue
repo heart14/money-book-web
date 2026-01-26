@@ -47,7 +47,8 @@
 
 <script setup lang="ts">
   import { hexToRgb } from '@/utils/ui'
-  import { ref, onMounted } from 'vue'
+  import { ref, inject, watch } from 'vue'
+  import type { Ref } from 'vue'
   import { fetchCategoryExpense } from '@/api/dashboard'
 
   /* 响应式数据 */
@@ -56,11 +57,12 @@
   const error = ref('')
 
   /* 拉取数据 */
+  const consoleYear = inject('consoleYear') as Ref<string> | undefined
   const loadData = async () => {
     loading.value = true
     error.value = ''
     try {
-      const res = await fetchCategoryExpense()
+      const res = await fetchCategoryExpense({ year: consoleYear?.value })
       dataList.value = (res as any).data ?? res
     } catch (e: any) {
       error.value = e?.message || '网络错误'
@@ -69,8 +71,8 @@
     }
   }
 
-  /* 组件挂载后自动请求 */
-  onMounted(() => loadData())
+  /* 组件挂载后自动请求并响应年份变化 */
+  watch(consoleYear ?? ref(''), () => loadData(), { immediate: true })
 
   const COLOR_THRESHOLDS = {
     LOW: 25,

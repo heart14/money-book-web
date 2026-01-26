@@ -14,7 +14,8 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted } from 'vue'
+  import { ref, inject, watch } from 'vue'
+  import type { Ref } from 'vue'
   import { fetchMonthlyExpense } from '@/api/dashboard'
   const monthlyExpenseList = ref<Api.Dashboard.MonthlyExpenseItem[]>([])
   const loading = ref(false)
@@ -23,11 +24,13 @@
   const xAxisLabels = ref()
   const chartData = ref()
 
+  const consoleYear = inject('consoleYear') as Ref<string> | undefined
+
   const loadMonthlyExpenseData = async () => {
     loading.value = true
     error.value = ''
     try {
-      const res = await fetchMonthlyExpense()
+      const res = await fetchMonthlyExpense({ year: consoleYear?.value })
       console.log('res---', res)
       monthlyExpenseList.value = (res as any).data ?? res
       // 月份中文
@@ -42,5 +45,5 @@
     }
   }
 
-  onMounted(() => loadMonthlyExpenseData())
+  watch(consoleYear ?? ref(''), () => loadMonthlyExpenseData(), { immediate: true })
 </script>

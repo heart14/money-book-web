@@ -21,8 +21,9 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted } from 'vue'
+  import { ref, inject, watch } from 'vue'
   import { fetchMonthlyIncome, fetchCategoryIncome } from '@/api/dashboard'
+  import type { Ref } from 'vue'
   const monthlyIncomeList = ref<Api.Dashboard.MonthlyIncomeItem[]>([])
   const loading = ref(false)
   const error = ref('')
@@ -32,11 +33,13 @@
   const xAxisLabels = ref()
   const chartData = ref()
 
+  const consoleYear = inject('consoleYear') as Ref<string> | undefined
+
   const loadMonthlyIncomeData = async () => {
     loading.value = true
     error.value = ''
     try {
-      const res = await fetchMonthlyIncome()
+      const res = await fetchMonthlyIncome({ year: consoleYear?.value })
       console.log('res---', res)
       monthlyIncomeList.value = (res as any).data ?? res
       // 月份中文
@@ -58,7 +61,7 @@
     loading.value = true
     error.value = ''
     try {
-      const res = await fetchCategoryIncome()
+      const res = await fetchCategoryIncome({ year: consoleYear?.value })
       console.log('res---', res)
       categoryIncomeList.value = (res as any).data ?? res
     } catch (e: any) {
@@ -68,8 +71,12 @@
     }
   }
 
-  onMounted(() => {
-    loadMonthlyIncomeData()
-    loadCategoryIncomeData()
-  })
+  watch(
+    consoleYear ?? ref(''),
+    () => {
+      loadMonthlyIncomeData()
+      loadCategoryIncomeData()
+    },
+    { immediate: true }
+  )
 </script>

@@ -31,7 +31,8 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted } from 'vue'
+  import { ref, inject, watch } from 'vue'
+  import type { Ref } from 'vue'
   import { fetchStatCardList } from '@/api/dashboard'
   import { DASHBOARD_ICON } from '@/utils/constants/icon'
 
@@ -40,12 +41,14 @@
   const loading = ref(false)
   const error = ref('')
 
+  const consoleYear = inject('consoleYear') as Ref<string> | undefined
+
   /* 拉取数据 */
   const loadData = async () => {
     loading.value = true
     error.value = ''
     try {
-      const res = await fetchStatCardList()
+      const res = await fetchStatCardList({ year: consoleYear?.value })
       dataList.value = (res as any).data ?? res
     } catch (e: any) {
       error.value = e?.message || '网络错误'
@@ -54,6 +57,5 @@
     }
   }
 
-  /* 组件挂载后自动请求 */
-  onMounted(() => loadData())
+  watch(consoleYear ?? ref(''), () => loadData(), { immediate: true })
 </script>
