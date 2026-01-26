@@ -1,14 +1,19 @@
 <!-- 工作台页面 -->
 <template>
   <div>
-    <ElRow justify="end" style="margin-bottom: 16px">
-      <ElCol :span="6" style="text-align: right">
+    <ElRow justify="space-between" style="margin-bottom: 12px">
+      <ElCol :span="12">
+        <div class="card-list-title">统计概览</div>
+      </ElCol>
+      <ElCol :span="12" style="text-align: right">
         <ElDatePicker
           v-model="selectedYear"
+          :clearable="false"
           type="year"
           placeholder="选择年份"
           value-format="YYYY"
           format="YYYY"
+          size="small"
         />
       </ElCol>
     </ElRow>
