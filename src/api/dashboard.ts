@@ -105,9 +105,10 @@ export function fetchCategoryList(params?: Api.Category.CategoryParam) {
 /**
  * 查询按月按分类数据汇总
  */
-export function fetchTabulateList() {
+export function fetchTabulateList(params?: { year?: string }) {
   return request.get<Api.Tabulate.TabulateItem>({
-    url: '/dashboard/tabulateList'
+    url: '/dashboard/tabulateList',
+    params
   })
 }
 

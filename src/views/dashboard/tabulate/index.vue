@@ -4,7 +4,17 @@
     <ElCard class="art-table-card" shadow="never" style="margin-top: 0">
       <!-- 标题 -->
       <template #header>
-        <div class="table-title">月/分类支出统计表（单位：元）</div>
+        <div class="table-header">
+          <div class="table-title">月/分类支出统计表（单位：元）</div>
+          <ElDatePicker
+            v-model="year"
+            type="year"
+            format="YYYY"
+            value-format="YYYY"
+            placeholder="选择年份"
+            :clearable="false"
+          />
+        </div>
       </template>
       <!-- 表格 -->
       <ArtTable
@@ -24,13 +34,17 @@
 </template>
 
 <script setup lang="ts">
+  import { ref, watch } from 'vue'
   import { useTable } from '@/hooks/core/useTable'
   import { fetchTabulateList } from '@/api/dashboard'
 
-  const { data, columns, loading } = useTable({
+  const year = ref<string>(new Date().getFullYear().toString())
+
+  const { data, columns, loading, getData, searchParams } = useTable({
     core: {
       apiFn: fetchTabulateList,
-      apiParams: {},
+      apiParams: { year: year.value },
+      excludeParams: ['current', 'size'],
       columnsFactory: () => [
         {
           prop: 'categoryName',
@@ -109,8 +123,21 @@
 
   const rowStyle = ({ row }: any) =>
     row.categoryName === '合计' ? { color: '#f56c6c', fontWeight: 'bold' } : {}
+
+  // 当年份改变时，将年份写入 searchParams 并按页查询
+  watch(year, (val) => {
+    ;(searchParams as any).year = val
+    getData()
+  })
 </script>
 <style scoped>
+  .table-header {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+  }
+
   .table-title {
     font-size: 18px;
     font-weight: 600;
